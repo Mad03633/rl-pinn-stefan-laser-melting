@@ -70,24 +70,24 @@ def blended_temperature(Tl, Ts, z_grid, t_grid, X_of_t):
 
 def main():
     # material properties Ti-6Al-4V
-    rho     = 4510.0
-    Lh      = 2.9e5
-    Tm      = 1928.0
-    T0      = 300.0
-    ks      = 20.0
-    kl      = 29.0
+    rho = 4510.0
+    Lh = 2.9e5
+    Tm = 1928.0
+    T0 = 300.0
+    ks = 20.0
+    kl = 29.0
     alpha_s = 5.8e-6
     alpha_l = 5.95e-6
-    A       = 0.433
+    A = 0.433
 
-    t_max   = 7e-6
-    z_max   = 15.0 * np.sqrt(alpha_s * t_max)
+    t_max = 7e-6
+    z_max = 15.0 * np.sqrt(alpha_s * t_max)
 
     # Intensity
     I_label_W_cm2 = 5e3 # 5 kW/cm²
-    I_W_per_m2    = I_label_W_cm2 * 1e4
-    I_scale       = 1000.0
-    AI_eff        = A * I_W_per_m2 * I_scale
+    I_W_per_m2 = I_label_W_cm2 * 1e4
+    I_scale = 1000.0
+    AI_eff = A * I_W_per_m2 * I_scale
 
     print("=" * 65)
     print("Ti-6Al-4V Laser Melting  —  PINN + Ngwenya supervision")
