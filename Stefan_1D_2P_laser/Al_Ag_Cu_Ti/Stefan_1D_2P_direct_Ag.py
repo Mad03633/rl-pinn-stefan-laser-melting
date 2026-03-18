@@ -43,22 +43,22 @@ def analytic_S(t_arr):
 
 
 def make_data(z_max, Nr=15000, N0=3000, Nbc=2000, NX=2000, seed=42):
-    rng   = np.random.RandomState(seed)
+    rng = np.random.RandomState(seed)
     t_eps = t_melt + 1e-10
 
-    t_rl     = rng.uniform(t_eps, t_max, Nr).astype(np.float32)
+    t_rl = rng.uniform(t_eps, t_max, Nr).astype(np.float32)
     # z_rl in [0, S_scale*sqrt(tau)] — covers the entire liquid zone
     # The old sqrt(alpha_l*(t-t_melt)) method underestimated by 4x -> the network didn't see z>2cm
-    tau_rl   = (t_rl - t_melt) / (t_max - t_melt)
+    tau_rl = (t_rl - t_melt) / (t_max - t_melt)
     z_rl_max = 0.0903 * np.sqrt(tau_rl).clip(1e-9)
-    z_rl     = (rng.uniform(0, 1, Nr) * z_rl_max).astype(np.float32)
+    z_rl = (rng.uniform(0, 1, Nr) * z_rl_max).astype(np.float32)
 
     z_rs = rng.uniform(0.0, z_max,   (Nr,  1)).astype(np.float32)
     t_rs = rng.uniform(t_eps, t_max,  (Nr,  1)).astype(np.float32)
     t_bc = rng.uniform(t_eps, t_max,  (Nbc, 1)).astype(np.float32)
-    t_S  = rng.uniform(t_eps, t_max,  (NX,  1)).astype(np.float32)
+    t_S = rng.uniform(t_eps, t_max,  (NX,  1)).astype(np.float32)
 
-    z_ic  = rng.uniform(0.0, z_max, (N0, 1)).astype(np.float32)
+    z_ic = rng.uniform(0.0, z_max, (N0, 1)).astype(np.float32)
     Ts_ic = preheating_Ts(
         z_ic.flatten(), t_melt, A_s, I_laser, ks, alpha_s, Tm, T0
     ).reshape(-1, 1)
