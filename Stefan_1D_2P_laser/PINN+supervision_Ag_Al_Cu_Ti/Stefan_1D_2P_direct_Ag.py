@@ -12,27 +12,27 @@ from Stefan_1D_2P_models_metals import (
 )
 
 # ── Material: Ag
-rho_s   = 10500
-rho_l   = 9300
-ks      = 429
-kl      = 361
+rho_s = 10500
+rho_l = 9300
+ks = 429
+kl = 361
 alpha_s = 1.737506e-04
 alpha_l = 1.330940e-04
-Tm      = 1234
-T0      = 300.0
-Lh      = 1.112e+05
-A_l     = 0.043
-t_melt  = 1.15
+Tm = 1234
+T0 = 300.0
+Lh = 1.112e+05
+A_l = 0.043
+t_melt = 1.15
 
 I_laser = 1e9
-t_max   = 10.0
-AI_l    = A_l * I_laser
+t_max = 10.0
+AI_l = A_l * I_laser
 
 
 def make_data(z_max, S_ref, t_ref,
               Nr=25000, N0=5000, Nbc=5000, NX=5000,
               N_sup=5000, N_sup_T=8000, seed=42):
-    rng   = np.random.RandomState(seed)
+    rng = np.random.RandomState(seed)
     t_eps = t_melt + 1e-10
 
     def S_at(t_val):
@@ -45,23 +45,23 @@ def make_data(z_max, S_ref, t_ref,
     z_rs = np.array([rng.uniform(S_at(ti), z_max)
                      for ti in t_rs], dtype=np.float32)
 
-    z_ic = rng.uniform(0.0, z_max,   (N0,  1)).astype(np.float32)
-    t_bc = rng.uniform(t_eps, t_max,  (Nbc, 1)).astype(np.float32)
-    t_X  = rng.uniform(t_eps, t_max,  (NX,  1)).astype(np.float32)
+    z_ic = rng.uniform(0.0, z_max, (N0,  1)).astype(np.float32)
+    t_bc = rng.uniform(t_eps, t_max, (Nbc, 1)).astype(np.float32)
+    t_X  = rng.uniform(t_eps, t_max, (NX,  1)).astype(np.float32)
 
-    t_sup_S  = rng.uniform(t_eps, t_max, N_sup).astype(np.float32)
-    S_sup    = np.interp(t_sup_S, t_ref, S_ref).astype(np.float32)
+    t_sup_S = rng.uniform(t_eps, t_max, N_sup).astype(np.float32)
+    S_sup = np.interp(t_sup_S, t_ref, S_ref).astype(np.float32)
 
     t_sup_Ts = rng.uniform(t_eps, t_max, N_sup_T).astype(np.float32)
     z_sup_Ts = np.array([rng.uniform(S_at(ti), z_max)
                          for ti in t_sup_Ts], dtype=np.float32)
-    Ts_sup   = k_Ts(z_sup_Ts, t_sup_Ts, AI_l, ks, alpha_s, Tm, T0, t_melt)
+    Ts_sup = k_Ts(z_sup_Ts, t_sup_Ts, AI_l, ks, alpha_s, Tm, T0, t_melt)
 
     t_sup_Tl = rng.uniform(t_eps, t_max, N_sup_T).astype(np.float32)
     z_sup_Tl = np.array([rng.uniform(0.0, max(S_at(ti), 1e-9))
                          for ti in t_sup_Tl], dtype=np.float32)
     S_sup_Tl = np.interp(t_sup_Tl, t_ref, S_ref).astype(np.float32)
-    Tl_sup   = k_Tl(z_sup_Tl, S_sup_Tl, AI_l, kl, Tm)
+    Tl_sup = k_Tl(z_sup_Tl, S_sup_Tl, AI_l, kl, Tm)
 
     return dict(
         z_rl=z_rl.reshape(-1,1),  t_rl=t_rl.reshape(-1,1),
