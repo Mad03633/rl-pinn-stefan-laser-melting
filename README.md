@@ -35,3 +35,23 @@ The goal is to create a **data-efficient and physically consistent framework** f
 - Use of **analytical supervision** to stabilize PINN training
 - Development of an **RL-based control strategy**
 - Validation against **analytical melt depth models**
+
+---
+
+## Mathematical Model
+
+We consider a **1D transient heat conduction problem** with a moving interface \( X(t) \).
+
+### Governing equations
+
+Liquid phase:
+
+$$
+\frac{\partial T_l}{\partial t} = \alpha_l \frac{\partial^2 T_l}{\partial z^2}
+$$
+
+Solid phase:
+
+$$
+\frac{\partial T_s}{\partial t} = \alpha_s \frac{\partial^2 T_s}{\partial z^2}
+$$
