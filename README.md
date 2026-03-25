@@ -55,3 +55,19 @@ Solid phase:
 $$
 \frac{\partial T_s}{\partial t} = \alpha_s \frac{\partial^2 T_s}{\partial z^2}
 $$
+
+---
+
+### Boundary conditions
+
+Laser heat flux at the surface:
+
+$$
+-k_l \frac{\partial T}{\partial z}\bigg|_{z=0} = A \cdot I
+$$
+
+Far-field condition:
+
+$$
+T(z_{\max}, t) = T_0
+$$
