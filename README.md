@@ -110,3 +110,21 @@ Loss =
 - Boundary_conditions + 
 - Interface_temperature + 
 - Stefan_condition + 
+
+Sampling is performed separately in:
+
+- liquid region: `0 ≤ z ≤ X(t)`
+- solid region: `X(t) ≤ z ≤ z_max`
+
+---
+
+## PINN + Analytical Supervision
+
+Pure PINNs often suffer from instability in moving boundary problems.
+
+To address this, the model is weakly guided using an analytical solution:
+
+- melt depth \(X(t)\)
+- surface temperature \(T_s(t)\)
+
+This hybrid approach improves convergence and physical consistency.
