@@ -71,3 +71,60 @@ Far-field condition:
 $$
 T(z_{\max}, t) = T_0
 $$
+
+---
+
+### Interface conditions (Stefan problem)
+
+Temperature continuity:
+
+$$
+T_l(X(t), t) = T_s(X(t), t) = T_m
+$$
+
+Stefan condition:
+
+$$
+\rho L \frac{dX}{dt} =
+k_s \frac{\partial T_s}{\partial z}
+-
+k_l \frac{\partial T_l}{\partial z}
+$$
+
+---
+
+## PINN Formulation
+
+The neural network approximates:
+
+- \(T_l(z,t)\) — liquid temperature  
+- \(T_s(z,t)\) — solid temperature  
+- \(X(t)\) — melt front position  
+
+### Loss function
+
+Loss =
+- PDE_liquid +
+- PDE_solid + 
+- Initial_condition + 
+- Boundary_conditions + 
+- Interface_temperature + 
+- Stefan_condition + 
+
+Sampling is performed separately in:
+
+- liquid region: `0 ≤ z ≤ X(t)`
+- solid region: `X(t) ≤ z ≤ z_max`
+
+---
+
+## PINN + Analytical Supervision
+
+Pure PINNs often suffer from instability in moving boundary problems.
+
+To address this, the model is weakly guided using an analytical solution:
+
+- melt depth \(X(t)\)
+- surface temperature \(T_s(t)\)
+
+This hybrid approach improves convergence and physical consistency.
