@@ -90,3 +90,23 @@ k_s \frac{\partial T_s}{\partial z}
 -
 k_l \frac{\partial T_l}{\partial z}
 $$
+
+---
+
+## PINN Formulation
+
+The neural network approximates:
+
+- \(T_l(z,t)\) — liquid temperature  
+- \(T_s(z,t)\) — solid temperature  
+- \(X(t)\) — melt front position  
+
+### Loss function
+
+Loss =
+- PDE_liquid +
+- PDE_solid + 
+- Initial_condition + 
+- Boundary_conditions + 
+- Interface_temperature + 
+- Stefan_condition + 
