@@ -71,3 +71,22 @@ Far-field condition:
 $$
 T(z_{\max}, t) = T_0
 $$
+
+---
+
+### Interface conditions (Stefan problem)
+
+Temperature continuity:
+
+$$
+T_l(X(t), t) = T_s(X(t), t) = T_m
+$$
+
+Stefan condition:
+
+$$
+\rho L \frac{dX}{dt} =
+k_s \frac{\partial T_s}{\partial z}
+-
+k_l \frac{\partial T_l}{\partial z}
+$$
