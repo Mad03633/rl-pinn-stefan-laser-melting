@@ -80,6 +80,9 @@ Temperature continuity:
 
 $$
 T_l(X(t), t) = T_s(X(t), t) = T_m
+
+---
+
 $$
 
 Stefan condition:
