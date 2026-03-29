@@ -156,3 +156,10 @@ env\Scripts\activate # Windows
 pip install --upgrade pip
 pip install -r requirements.txt
 
+## Example Results
+
+### Ti-6AI-4V
+
+Analytical solution by (Ngwenya and Kahlen (2012)).
+
+![](https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser/Ti-6AI-4V/figures/analytical_solution_Ngwenya.png)
