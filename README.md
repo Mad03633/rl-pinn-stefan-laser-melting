@@ -80,6 +80,9 @@ Temperature continuity:
 
 $$
 T_l(X(t), t) = T_s(X(t), t) = T_m
+
+---
+
 $$
 
 Stefan condition:
@@ -128,3 +131,45 @@ To address this, the model is weakly guided using an analytical solution:
 - surface temperature \(T_s(t)\)
 
 This hybrid approach improves convergence and physical consistency.
+
+---
+
+## Reinforcement Learning
+
+IN PROCESS...
+
+---
+
+## Installation
+
+### Recommended Python version
+
+Python 3.10
+
+### Setup
+
+
+git clone https://github.com/Mad03633/rl-pinn-stefan-laser-melting.git
+
+cd rl-pinn-stefan-laser-melting
+
+python -m venv env
+env\Scripts\activate # Windows
+
+pip install --upgrade pip
+pip install -r requirements.txt
+
+## Example Results
+
+### Ti-6AI-4V
+
+Analytical solution by (Ngwenya and Kahlen (2012)).
+
+![](https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser/Ti-6AI-4V/figures/analytical_solution_Ngwenya.png)
+
+PINN (I = 5kW, 50kW, 500kW, 5MW)
+
+<p align="center">
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser/Ti-6AI-4V/figures/PINN%2Bsupervision/analytical_vs_PINN_I_5kW.png" width="45%" />
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser/Ti-6AI-4V/figures/PINN%2Bsupervision/analytical_vs_PINN_I_50kW.png" width="45%" />
+</p>
