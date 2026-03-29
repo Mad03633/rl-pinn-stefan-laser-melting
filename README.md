@@ -149,7 +149,7 @@ Python 3.10
 ### Setup
 
 
-git clone https://github.com/your-username/rl-pinn-stefan-laser-melting.git
+git clone https://github.com/Mad03633/rl-pinn-stefan-laser-melting.git
 
 cd rl-pinn-stefan-laser-melting
 
