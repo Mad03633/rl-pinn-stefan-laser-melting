@@ -128,3 +128,31 @@ To address this, the model is weakly guided using an analytical solution:
 - surface temperature \(T_s(t)\)
 
 This hybrid approach improves convergence and physical consistency.
+
+---
+
+## Reinforcement Learning
+
+IN PROCESS...
+
+---
+
+## Installation
+
+### Recommended Python version
+
+Python 3.10
+
+### Setup
+
+
+git clone https://github.com/your-username/rl-pinn-stefan-laser-melting.git
+
+cd rl-pinn-stefan-laser-melting
+
+python -m venv env
+env\Scripts\activate # Windows
+
+pip install --upgrade pip
+pip install -r requirements.txt
+
