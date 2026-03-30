@@ -176,5 +176,10 @@ PINN (I = 5kW, 50kW, 500kW, 5MW)
 
 <p align="center">
   <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser/Ti-6AI-4V/figures/PINN%2Bsupervision/analytical_vs_PINN_I_50kW.png" width="45%" />
-  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser/Ti-6AI-4V/figures/PINN%2Bsupervision/temp_field-pinn_pred_I_50kW.png" width="45%" />
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser/Ti-6AI-4V/figures/PINN%2Bsupervision/temp_field-pinn_pred_I_50kW.png" width="50%" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser/Ti-6AI-4V/figures/PINN%2Bsupervision/analytical_vs_PINN_I_500kW.png" width="45%" />
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser/Ti-6AI-4V/figures/PINN%2Bsupervision/temp_field-pinn_pred_I_500kW.png" width="50%" />
 </p>
