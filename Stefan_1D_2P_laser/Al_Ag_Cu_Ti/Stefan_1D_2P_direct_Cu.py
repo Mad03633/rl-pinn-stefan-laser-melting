@@ -1,5 +1,5 @@
 # ============================================================
-# Stefan_1D_2P_direct_Cu.py
+# Stefan_1D_2P_direct_Cu.py  — v5 full
 # PINN pure physics — Cu
 # I = 1e9 W/m²,  t in [t_melt=1.94, 10 s]
 # ============================================================
@@ -11,54 +11,60 @@ from scipy.special import erfcinv
 from Stefan_1D_2P_models_metals import StefanMetals, preheating_Ts
 
 # ── Params: Cu
-rho_s = 8960
-rho_l = 8000
-ks = 401
-kl = 342
+rho_s   = 8960
+rho_l   = 8000
+ks      = 401
+kl      = 342
 alpha_s = 1.159442e-04
 alpha_l = 8.906250e-05
-Tm = 1358
-T0 = 300.0
-Lh = 2.047e+05
-A_s = 0.02
-A_l = 0.058
-t_melt = 1.94
+Tm      = 1358
+T0      = 300.0
+Lh      = 2.047e+05
+A_s     = 0.02
+A_l     = 0.058
+t_melt  = 1.94
 
 I_laser = 1e9
-t_max = 10.0
-AI_l = A_l * I_laser
+t_max   = 10.0
+AI_l    = A_l * I_laser
 
 
 def analytic_S(t_arr):
     S = np.zeros_like(t_arr, dtype=np.float64)
     for i, t in enumerate(t_arr):
+        if t <= t_melt:
+            continue
+
         tp = t - t_melt
-        if tp <= 0: continue
-        Tsurf = T0 + (2*AI_l/ks)*np.sqrt(alpha_s*tp/np.pi)
-        if Tsurf <= Tm: continue
-        ratio = (Tm-T0)/(Tsurf-T0)
-        if 0 < ratio < 1:
-            S[i] = 2*np.sqrt(alpha_s*tp)*erfcinv(ratio)
+
+        Tsurf = T0 + (2.0 * AI_l / ks) * np.sqrt(alpha_s * t / np.pi)
+
+        if Tsurf <= Tm:
+            continue
+
+        ratio = (Tm - T0) / (Tsurf - T0)
+        if 0.0 < ratio < 1.0:
+            S[i] = 2.0 * np.sqrt(alpha_s * tp) * erfcinv(ratio)
     return S
 
 
 def make_data(z_max, Nr=15000, N0=3000, Nbc=2000, NX=2000, seed=42):
-    rng = np.random.RandomState(seed)
+    rng   = np.random.RandomState(seed)
     t_eps = t_melt + 1e-10
 
-    t_rl = rng.uniform(t_eps, t_max, Nr).astype(np.float32)
+    t_rl     = rng.uniform(t_eps, t_max, Nr).astype(np.float32)
     # z_rl in [0, S_scale*sqrt(tau)] — covers the entire liquid zone
     # The old sqrt(alpha_l*(t-t_melt)) method underestimated by 4x -> the network didn't see z>2cm
-    tau_rl = (t_rl - t_melt) / (t_max - t_melt)
+    tau_rl   = (t_rl - t_melt) / (t_max - t_melt)
     z_rl_max = 0.0701 * np.sqrt(tau_rl).clip(1e-9)
-    z_rl = (rng.uniform(0, 1, Nr) * z_rl_max).astype(np.float32)
+    z_rl     = (rng.uniform(0, 1, Nr) * z_rl_max).astype(np.float32)
 
     z_rs = rng.uniform(0.0, z_max,   (Nr,  1)).astype(np.float32)
     t_rs = rng.uniform(t_eps, t_max,  (Nr,  1)).astype(np.float32)
     t_bc = rng.uniform(t_eps, t_max,  (Nbc, 1)).astype(np.float32)
-    t_S = rng.uniform(t_eps, t_max,  (NX,  1)).astype(np.float32)
+    t_S  = rng.uniform(t_eps, t_max,  (NX,  1)).astype(np.float32)
 
-    z_ic = rng.uniform(0.0, z_max, (N0, 1)).astype(np.float32)
+    z_ic  = rng.uniform(0.0, z_max, (N0, 1)).astype(np.float32)
     Ts_ic = preheating_Ts(
         z_ic.flatten(), t_melt, A_s, I_laser, ks, alpha_s, Tm, T0
     ).reshape(-1, 1)

@@ -1,5 +1,5 @@
 # ============================================================
-# Stefan_1D_2P_models_metals.py
+# Stefan_1D_2P_models_metals.py  — v5  (pure physics)
 # PINN for 1D two-phase Stefan — laser melting
 # Al, Ag, Cu, Ti  |  I = 1e9 W/m²  |  t in [t_melt, 10 s]
 #
@@ -29,6 +29,10 @@ def _ierfc(u):
     return np.exp(-u**2) / np.sqrt(np.pi) - u * scipy_erfc(u)
 
 def preheating_Ts(z_arr, t_melt, A_s, I, ks, alpha_s, Tm, T0):
+    """
+    Ts(z, t_melt) = T0 + (2*A_s*I/ks)*sqrt(alpha_s*t_melt/pi)*ierfc(xi)
+    This is an exact analytical result for a half-space with constant flux.
+    """
     z_arr = np.asarray(z_arr, dtype=np.float64)
     AI_s  = float(A_s) * float(I)
     coeff = (2.0 * AI_s / ks) * np.sqrt(alpha_s * t_melt / np.pi)
@@ -60,6 +64,12 @@ class FCNN:
 
 
 class StefanMetals:
+    """
+    Pure-physics PINN for the Stefan problem after melting begins.
+
+    Supervision is ONLY on the IC (physically accurate heating profile).
+    S(t) is obtained from physics, without supervision on the analytical curve.
+    """
 
     def __init__(
         self,
@@ -92,24 +102,24 @@ class StefanMetals:
             S_scale = 5.0 * np.sqrt(float(alpha_s) * float(t_max))
         S_scale = float(S_scale)
 
-        T_char = float(Tm - T0)
+        T_char   = float(Tm - T0)
         # dT_l from the actual S_max (S_max_hint), not from S_scale
         # S_scale is too high -> dT_l is unrealistically large -> the network cannot learn
         # Boiling cap is NOT needed: large dT_l is physically correct and
         # is necessary for the network to represent the BC gradient
-        S_for_dTl = float(S_max_hint) if S_max_hint is not None else S_scale
-        Tl_surf = float(Tm) + (AI_l / float(kl)) * S_for_dTl
-        dT_l = max(1.2 * (Tl_surf - float(T0)), 1.2 * T_char)
-        dT_s = 1.05 * T_char
-        t_dur = float(t_max - t_melt)
+        S_for_dTl  = float(S_max_hint) if S_max_hint is not None else S_scale
+        Tl_surf    = float(Tm) + (AI_l / float(kl)) * S_for_dTl
+        dT_l       = max(1.2 * (Tl_surf - float(T0)), 1.2 * T_char)
+        dT_s     = 1.05 * T_char
+        t_dur    = float(t_max - t_melt)
 
-        pde_s = T_char / t_dur
-        pde_l = max(float(alpha_l) * AI_l / (float(kl) * S_scale), pde_s)
+        pde_s    = T_char / t_dur
+        pde_l    = max(float(alpha_l) * AI_l / (float(kl) * S_scale), pde_s)
 
         # BC normalization: we use kl*(Tm-T0)/sqrt(alpha_l*t_max)
         # — characteristic temperature gradient in the liquid
-        q_scale = max(AI_l, float(kl) * T_char / np.sqrt(float(alpha_l) * float(t_max)))
-        s_scale = max(AI_l, float(rho_s) * float(Lh) * S_scale / t_dur)
+        q_scale  = max(AI_l, float(kl) * T_char / np.sqrt(float(alpha_l) * float(t_max)))
+        s_scale  = max(AI_l, float(rho_s) * float(Lh) * S_scale / t_dur)
 
         Ts_surf = preheating_Ts(np.array([0.0]), t_melt, A_s, I, ks, alpha_s, Tm, T0)[0]
 
@@ -121,50 +131,50 @@ class StefanMetals:
         print(f"  Ts(0, t_melt) = {Ts_surf:.0f} K  (IC, аналитически точно)")
 
         C = lambda v: tf.constant(float(v), dtype=tf.float32)
-        self.rho_s = C(rho_s); self.rho_l = C(rho_l)
-        self.ks = C(ks); self.kl = C(kl)
+        self.rho_s   = C(rho_s);   self.rho_l   = C(rho_l)
+        self.ks      = C(ks);      self.kl      = C(kl)
         self.alpha_s = C(alpha_s); self.alpha_l = C(alpha_l)
-        self.Lh = C(Lh)
-        self.Tm = C(Tm); self.T0 = C(T0)
-        self.AI_l = C(AI_l)
-        self.z_max = C(z_max)
+        self.Lh      = C(Lh)
+        self.Tm      = C(Tm);      self.T0      = C(T0)
+        self.AI_l    = C(AI_l)
+        self.z_max      = C(z_max)
         # z_liq_max = S_scale: normalize net_Tl to the maximum liquid zone
         # CRITICAL: z_rl is sampled to S_scale -> normalization must also be S_scale
         # If z_liq_max << S_scale: nz = 2*z/z_liq_max-1 >> 1 -> tanh is saturated -> grad = 0
         # If z_liq_max = S_scale: nz in [-1,1] for all sampling points
-        z_liq_max = S_scale  # = S_scale, not sqrt(alpha_l*t_max)
-        self.z_liq_max = C(z_liq_max)
+        z_liq_max       = S_scale  # = S_scale, not sqrt(alpha_l*t_max)
+        self.z_liq_max  = C(z_liq_max)
         print(f'  z_liq_max = {z_liq_max*100:.2f} cm  (= S_scale, liquid normalisation scale)')
-        self.t_melt = C(t_melt); self.t_span = C(t_max - t_melt)
+        self.t_melt  = C(t_melt);  self.t_span  = C(t_max - t_melt)
         self.S_scale = C(S_scale)
-        self.dT_l = C(dT_l); self.dT_s = C(dT_s)
-        self.T_char = C(T_char)
-        self.X_min = C(X_min_m)
-        self.delta = C(max(1e-3 * S_scale, 1e-9))
-        self.pde_l = C(pde_l); self.pde_s = C(pde_s)
+        self.dT_l    = C(dT_l);    self.dT_s    = C(dT_s)
+        self.T_char  = C(T_char)
+        self.X_min   = C(X_min_m)
+        self.delta   = C(max(1e-3 * S_scale, 1e-9))
+        self.pde_l   = C(pde_l);   self.pde_s   = C(pde_s)
         self.q_scale = C(q_scale); self.s_scale = C(s_scale)
 
-        self.w_r = C(w_r); self.w_ic = C(w_ic)
+        self.w_r    = C(w_r);    self.w_ic   = C(w_ic)
         self.w_bc_l = C(w_bc_l); self.w_bc_s = C(w_bc_s)
-        self.w_xt = C(w_xt); self.w_xs = C(w_xs)
-        self.w_x0 = C(w_x0); self.w_xmin = C(w_xmin)
+        self.w_xt   = C(w_xt);   self.w_xs   = C(w_xs)
+        self.w_x0   = C(w_x0);   self.w_xmin = C(w_xmin)
 
         self.net_Tl = FCNN(list(layers_T))
         self.net_Ts = FCNN(list(layers_T))
-        self.net_S = FCNN(list(layers_S))
+        self.net_S  = FCNN(list(layers_S))
 
         # physics placeholders
-        self.z_rl = tf.placeholder(tf.float32, [None,1], 'z_rl')
-        self.t_rl = tf.placeholder(tf.float32, [None,1], 't_rl')
-        self.z_rs = tf.placeholder(tf.float32, [None,1], 'z_rs')
-        self.t_rs = tf.placeholder(tf.float32, [None,1], 't_rs')
-        self.t_bc = tf.placeholder(tf.float32, [None,1], 't_bc')
-        self.t_S = tf.placeholder(tf.float32, [None,1], 't_S')
+        self.z_rl  = tf.placeholder(tf.float32, [None,1], 'z_rl')
+        self.t_rl  = tf.placeholder(tf.float32, [None,1], 't_rl')
+        self.z_rs  = tf.placeholder(tf.float32, [None,1], 'z_rs')
+        self.t_rs  = tf.placeholder(tf.float32, [None,1], 't_rs')
+        self.t_bc  = tf.placeholder(tf.float32, [None,1], 't_bc')
+        self.t_S   = tf.placeholder(tf.float32, [None,1], 't_S')
         # IC placeholder (Ts supervised, физически точный)
-        self.z_ic = tf.placeholder(tf.float32, [None,1], 'z_ic')
+        self.z_ic  = tf.placeholder(tf.float32, [None,1], 'z_ic')
         self.Ts_ic = tf.placeholder(tf.float32, [None,1], 'Ts_ic')
 
-        self.lr = tf.placeholder(tf.float32, [], 'lr')
+        self.lr          = tf.placeholder(tf.float32, [], 'lr')
         self.phys_weight = tf.placeholder(tf.float32, [], 'phys_weight')
 
         self._build_graph()
@@ -179,6 +189,7 @@ class StefanMetals:
         return 2.0 * z / self.z_max - 1.0
 
     def _nz_liq(self, z):
+        """Normalization for the liquid zone by z_liq_max (not z_max)."""
         return 2.0 * z / self.z_liq_max - 1.0
 
     def _nt(self, t):
@@ -189,6 +200,7 @@ class StefanMetals:
         return tf.concat([self._nz(z), self._nt(t)], axis=1)
 
     def _nzt_liq(self, z, t):
+        """Inputs for net_Tl: z is normalized by z_liq_max."""
         return tf.concat([self._nz_liq(z), self._nt(t)], axis=1)
 
     def S(self, t):
