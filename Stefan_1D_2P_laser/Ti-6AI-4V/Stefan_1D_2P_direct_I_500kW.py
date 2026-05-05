@@ -1,5 +1,15 @@
+# ============================================================
+# Stefan_1D_2P_direct.py
 # Runner for PINN — 1-D two-phase Stefan problem
 # Laser melting of Ti-6Al-4V (Ngwenya & Kahlen, IMECE 2012)
+#
+# Changes vs. original v3:
+#   1. Pre-computes Ngwenya analytical reference (X, Ts, Tl)
+#   2. Passes analytical data as supervision to PINN
+#   3. Collocation points for liquid/solid respect X(t) boundary
+#   4. Comparison plot: PINN vs. analytical X(t)
+#   5. Intensity scale factor 1000 (see analysis)
+# ============================================================
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,37 +20,52 @@ def make_training_data(z_max, t_max, X_analytic_arr, t_ref_arr,
                        Nr=25000, N0=8000, Nbc=8000, NX=8000,
                        N_sup_X=3000, N_sup_T=5000,
                        seed=1234):
+    """
+    Build training data dict.
+
+    Physics collocation (same role as original direct.py):
+      z_rl, t_rl  – liquid residual (z sampled below X(t))
+      z_rs, t_rs  – solid  residual (z sampled above X(t))
+      z0          – IC points (t=0)
+      t_bc        – surface BC times
+      t_X         – interface times
+
+    Ngwenya supervision (NEW):
+      t_sup_X, X_sup             – melt-front
+      z_sup_Ts, t_sup_Ts, Ts_sup – solid temperature
+      z_sup_Tl, t_sup_Tl, Tl_sup – liquid temperature
+    """
     rng = np.random.RandomState(seed)
     t_eps = 1e-9
 
     def X_at(t_val):
         return float(np.interp(t_val, t_ref_arr, X_analytic_arr))
 
-    # Physics: liquid residual — z sampled BELOW X(t)
+    # ── Physics: liquid residual — z sampled BELOW X(t) ──────
     t_rl = rng.uniform(t_eps, t_max, Nr).astype(np.float32)
     z_rl = np.array([rng.uniform(0.0, max(X_at(ti), 1e-9))
                      for ti in t_rl], dtype=np.float32)
 
-    # Physics: solid residual — z sampled ABOVE X(t)
+    # ── Physics: solid residual — z sampled ABOVE X(t) ───────
     t_rs = rng.uniform(t_eps, t_max, Nr).astype(np.float32)
     z_rs = np.array([rng.uniform(X_at(ti), z_max)
                      for ti in t_rs], dtype=np.float32)
 
-    # Physics: IC, BC, interface
+    # ── Physics: IC, BC, interface ────────────────────────────
     z0   = rng.uniform(0.0, z_max, (N0,  1)).astype(np.float32)
     t_bc = rng.uniform(t_eps, t_max, (Nbc, 1)).astype(np.float32)
     t_X  = rng.uniform(t_eps, t_max, (NX,  1)).astype(np.float32)
 
-    # Ngwenya supervision: X(t)
+    # ── Ngwenya supervision: X(t) ────────────────────────────
     t_sup_X = rng.uniform(t_eps, t_max, N_sup_X).astype(np.float32)
     X_sup   = np.array([X_at(ti) for ti in t_sup_X], dtype=np.float32)
 
-    # Ngwenya supervision: Ts in solid region
+    # ── Ngwenya supervision: Ts in solid region ───────────────
     t_sup_Ts = rng.uniform(t_eps, t_max, N_sup_T).astype(np.float32)
     z_sup_Ts = np.array([rng.uniform(X_at(ti), z_max)
                          for ti in t_sup_Ts], dtype=np.float32)
 
-    # Ngwenya supervision: Tl in liquid region
+    # ── Ngwenya supervision: Tl in liquid region ─────────────
     t_sup_Tl = rng.uniform(t_eps, t_max, N_sup_T).astype(np.float32)
     z_sup_Tl = np.array([rng.uniform(0.0, max(X_at(ti), 1e-9))
                          for ti in t_sup_Tl], dtype=np.float32)
@@ -78,25 +103,26 @@ def blended_temperature(Tl, Ts, z_grid, t_grid, X_of_t):
 
 
 def main():
-    # Material properties: Ti-6Al-4V
-    rho = 4510.0  # kg/m^3
-    Lh = 2.9e5 # J/kg
-    Tm = 1928.0 # K
-    T0 = 300.0 # K
-    ks = 20.0 # W/(m·K)
-    kl = 29.0 # W/(m·K)
-    alpha_s = 5.8e-6 # m^2/s
-    alpha_l = 5.95e-6 # m^2/s
-    A = 0.433 # absorptance
+    # ── Material properties: Ti-6Al-4V ───────────────────────
+    rho     = 4510.0    # kg/m^3
+    Lh      = 2.9e5     # J/kg
+    Tm      = 1928.0    # K
+    T0      = 300.0     # K
+    ks      = 20.0      # W/(m·K)
+    kl      = 29.0      # W/(m·K)
+    alpha_s = 5.8e-6    # m^2/s
+    alpha_l = 5.95e-6   # m^2/s
+    A       = 0.433     # absorptance
 
-    t_max = 7e-6 # 7 µs
-    z_max = 15.0 * np.sqrt(alpha_s * t_max) # domain depth
+    t_max = 7e-6                              # 7 µs
+    z_max = 15.0 * np.sqrt(alpha_s * t_max)  # domain depth
 
-    # Laser intensity
-    I_label_W_cm2 = 5e5 # 500 kW/cm^2
-    I_W_per_m2 = I_label_W_cm2 * 1e4
-    I_scale = 1000.0 # effective = labeled × 1000
-    AI_eff = A * I_W_per_m2 * I_scale # W/m^2
+    # ── Laser intensity ───────────────────────────────────────
+    # Intensity as labeled in Ngwenya Fig.2 (W/cm^2)
+    I_label_W_cm2 = 5e5             # 500 kW/cm^2
+    I_W_per_m2    = I_label_W_cm2 * 1e4
+    I_scale       = 1000.0          # effective = labeled × 1000
+    AI_eff        = A * I_W_per_m2 * I_scale   # W/m^2
 
     print("=" * 62)
     print("  Ti-6Al-4V Laser Melting  —  PINN + Ngwenya supervision")
@@ -105,6 +131,7 @@ def main():
     print(f"  I label = {I_label_W_cm2/1e3:.0f} kW/cm²   I_scale = {I_scale:.0f}")
     print(f"  A·I_eff = {AI_eff:.3e} W/m²")
 
+    # ── Pre-compute Ngwenya reference on fine grid ────────────
     N_ref    = 2000
     t_ref    = np.linspace(0.0, t_max, N_ref)
     X_ref    = ngwenya_X(t_ref, AI_eff, ks, alpha_s, Tm, T0)
@@ -112,9 +139,11 @@ def main():
     t_melt = np.pi / (4.0 * alpha_s) * (ks * (Tm - T0) / AI_eff)**2
     print(f"  Melting onset t₀ = {t_melt*1e9:.2f} ns")
 
+    # ── Build training data ───────────────────────────────────
     print("\nBuilding training data ...")
     data = make_training_data(z_max, t_max, X_ref, t_ref)
 
+    # Evaluate analytical Ts, Tl at supervision points
     Ts_sup_vals = ngwenya_Ts(
         data["_z_sup_Ts"], data["_t_sup_Ts"],
         AI_eff, ks, alpha_s, Tm, T0
@@ -132,6 +161,7 @@ def main():
     print(f"  Supervision Ts pts  : {data['z_sup_Ts'].shape[0]}")
     print(f"  Supervision Tl pts  : {data['z_sup_Tl'].shape[0]}")
 
+    # ── Build model ───────────────────────────────────────────
     model = Stefan1D2P(
         z_min=0.0, z_max=z_max,
         t_min=0.0, t_max=t_max,
@@ -143,7 +173,7 @@ def main():
         layers_X=(1, 100, 100, 100, 1),
         X_scale=z_max,
         I_scale=I_scale,
-        # original physics weights
+        # original physics weights (unchanged from v3)
         w_r=1.0, w_T0=10.0, w_bc=200.0, w_far=10.0,
         w_xt=800.0, w_xs=80.0, w_x0=10.0, w_xmin=30.0,
         X_min_m=5e-7,
@@ -152,6 +182,7 @@ def main():
         seed=1234,
     )
 
+    # ── Training schedule ─────────────────────────────────────
     print("--- Phase 1: data supervision warm-up (phys_weight=0) ---")
     model.train(data, iters=5000, lr=5e-4, print_every=1000, phys_weight=0.0)
 
@@ -170,6 +201,7 @@ def main():
     print("--- Phase 5: final physics restoration ---")
     model.train(data, iters=3000, lr=2e-5, print_every=1000, phys_weight=1.0)
 
+    # ── Evaluate ──────────────────────────────────────────────
     Nt = 500
     t_plot = np.linspace(0.0, t_max, Nt).astype(np.float32).reshape(-1, 1)
     X_pinn = model.eval_X(t_plot)
@@ -177,6 +209,7 @@ def main():
     print(f"\nPINN   X(t_max) = {float(X_pinn[-1])*1e6:.4f} µm")
     print(f"Analyt X(t_max) = {X_ref[-1]*1e6:.4f} µm")
 
+    # ── Figure 1: X(t) comparison ─────────────────────────────
     fig1, ax1 = plt.subplots(figsize=(8, 5))
     ax1.plot(t_ref * 1e6, X_ref * 1e6,
              'k-', linewidth=2.5, label='Analytical (Ngwenya)')
@@ -192,6 +225,7 @@ def main():
     ax1.grid(True, alpha=0.3)
     plt.tight_layout()
 
+    # ── Figure 2: Temperature field ───────────────────────────
     Nz   = 160
     z_lin = np.linspace(0.0, z_max, Nz).astype(np.float32).reshape(-1, 1)
     Zg   = np.repeat(z_lin, Nt, axis=0).astype(np.float32)
@@ -213,7 +247,8 @@ def main():
     ax2.set_title("Temperature field — PINN prediction", fontsize=12)
     ax2.legend(loc="lower left", fontsize=10)
     plt.tight_layout()
-    
+
+    # ── Figure 3: All 4 curves from Ngwenya Fig.2 ────────────
     fig3, ax3 = plt.subplots(figsize=(9, 6))
     configs = [
         (5e3,  '5 kW/cm²',   '-',  '#1f77b4'),
