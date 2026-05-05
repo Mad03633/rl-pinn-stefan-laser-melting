@@ -1,5 +1,13 @@
+# ============================================================
+# Stefan_1D_2P_direct.py
 # Runner for PINN — 1-D two-phase Stefan, Ti-6Al-4V
 # Ngwenya & Kahlen IMECE 2012
+#
+# Training curriculum:
+#   Phase 1 (warm-up): data supervision only  → X(t) converges
+#   Phase 2: physics losses added at full weight
+#   Phase 3: fine-tune with lower lr
+# ============================================================
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -70,30 +78,31 @@ def blended_temperature(Tl, Ts, z_grid, t_grid, X_of_t):
 
 def main():
     # material properties Ti-6Al-4V
-    rho = 4510.0
-    Lh = 2.9e5
-    Tm = 1928.0
-    T0 = 300.0
-    ks = 20.0
-    kl = 29.0
+    rho     = 4510.0
+    Lh      = 2.9e5
+    Tm      = 1928.0
+    T0      = 300.0
+    ks      = 20.0
+    kl      = 29.0
     alpha_s = 5.8e-6
     alpha_l = 5.95e-6
-    A = 0.433
+    A       = 0.433
 
-    t_max = 7e-6
-    z_max = 15.0 * np.sqrt(alpha_s * t_max)
+    t_max   = 7e-6
+    z_max   = 15.0 * np.sqrt(alpha_s * t_max)
 
-    # Intensity
-    I_label_W_cm2 = 5e4 # 50 kW/cm²
-    I_W_per_m2 = I_label_W_cm2 * 1e4
-    I_scale = 1000.0
-    AI_eff = A * I_W_per_m2 * I_scale
+    # ── intensity ─────────────────────────────────────────────
+    I_label_W_cm2 = 5e4        # 50 kW/cm²
+    I_W_per_m2    = I_label_W_cm2 * 1e4
+    I_scale       = 1000.0
+    AI_eff        = A * I_W_per_m2 * I_scale
 
     print("=" * 65)
     print("  Ti-6Al-4V Laser Melting  —  PINN + Ngwenya supervision v4")
     print("=" * 65)
     print(f"  I = {I_label_W_cm2/1e3:.0f} kW/cm²   A·I_eff = {AI_eff:.3e} W/m²")
 
+    # ── pre-compute Ngwenya reference ─────────────────────────
     N_ref = 2000
     t_ref = np.linspace(0.0, t_max, N_ref)
     X_ref = ngwenya_X(t_ref, AI_eff, ks, alpha_s, Tm, T0)
@@ -101,6 +110,7 @@ def main():
     t_melt = np.pi / (4.0*alpha_s) * (ks*(Tm-T0)/AI_eff)**2
     print(f"  X_max = {X_max*1e6:.2f} µm   t_melt = {t_melt*1e9:.2f} ns")
 
+    # ── training data ─────────────────────────────────────────
     print("\nBuilding training data ...")
     data = make_training_data(z_max, t_max, X_ref, t_ref)
 
@@ -117,6 +127,7 @@ def main():
 
     print(f"  Tl_sup range: [{Tl_sup_vals.min():.0f}, {Tl_sup_vals.max():.0f}] K")
 
+    # ── build model ───────────────────────────────────────────
     model = Stefan1D2P(
         z_min=0.0, z_max=z_max, t_min=0.0, t_max=t_max,
         rho=rho, Lh=Lh, T0=T0, Tm=Tm,
@@ -137,6 +148,7 @@ def main():
         seed=1234,
     )
 
+    # ── curriculum training ───────────────────────────────────
     print("--- Phase 1: data supervision warm-up (phys_weight=0) ---")
     model.train(data, iters=5000, lr=5e-4, print_every=1000, phys_weight=0.0)
 
@@ -155,12 +167,14 @@ def main():
     print("--- Phase 5: final physics restoration ---")
     model.train(data, iters=5000, lr=2e-5, print_every=1000, phys_weight=1.0)
 
+    # ── evaluate ─────────────────────────────────────────────
     Nt = 500
     t_plot = np.linspace(0.0, t_max, Nt).astype(np.float32).reshape(-1,1)
     X_pinn = model.eval_X(t_plot)
     print(f"\nPINN   X(t_max) = {float(X_pinn[-1])*1e6:.4f} µm")
     print(f"Analyt X(t_max) = {X_max*1e6:.4f} µm")
 
+    # ── Figure 1: X(t) ───────────────────────────────────────
     fig1, ax1 = plt.subplots(figsize=(8,5))
     ax1.plot(t_ref*1e6, X_ref*1e6,
              'k-', lw=2.5, label='Analytical (Ngwenya)')
@@ -176,6 +190,7 @@ def main():
     ax1.set_ylim(0, ymax)
     plt.tight_layout()
 
+    # ── Figure 2: T-field ─────────────────────────────────────
     Nz   = 160
     z_lin = np.linspace(0.0, z_max, Nz).astype(np.float32).reshape(-1,1)
     Zg   = np.repeat(z_lin, Nt, axis=0).astype(np.float32)
@@ -183,6 +198,7 @@ def main():
     T_bl = blended_temperature(
         model.eval_Tl(Zg, Tg), model.eval_Ts(Zg, Tg), Zg, Tg, X_pinn
     )
+    # show only near-surface region for clarity
     z_show = max(X_max * 4, 5e-6)
 
     fig2, ax2 = plt.subplots(figsize=(9,5))
@@ -200,6 +216,7 @@ def main():
     ax2.legend(loc="lower left", fontsize=10)
     plt.tight_layout()
 
+    # ── Figure 3: all 4 Ngwenya curves ───────────────────────
     fig3, ax3 = plt.subplots(figsize=(9,6))
     configs = [
         (5e3,  '5 kW/cm²',   '-',  '#1f77b4'),
