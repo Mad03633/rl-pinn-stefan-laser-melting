@@ -194,3 +194,9 @@ PINN (I = 5kW, 50kW, 500kW, 5MW)
 Analytical solution:
 
 ![](https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/dev/Stefan_1D_2P_laser/Al_Ag_Cu_Ti/figures/analytical_solution_Al_Ag_Cu_Ti.jpg)
+
+PINN (Ag, Al, Cu, Ti)
+
+<p align="center">
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/dev/Stefan_1D_2P_laser/Al_Ag_Cu_Ti/figures/melt_depth_Ag_PINN_full.png" />
+</p>
