@@ -200,3 +200,15 @@ PINN (Ag, Al, Cu, Ti)
 <p align="center">
   <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/dev/Stefan_1D_2P_laser/Al_Ag_Cu_Ti/figures/melt_depth_Ag_PINN_full.png" />
 </p>
+
+<p align="center">
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/dev/Stefan_1D_2P_laser/Al_Ag_Cu_Ti/figures/melt_depth_Al_PINN_full.png" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/dev/Stefan_1D_2P_laser/Al_Ag_Cu_Ti/figures/melt_depth_Cu_PINN_full.png" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/dev/Stefan_1D_2P_laser/Al_Ag_Cu_Ti/figures/melt_depth_Ti_PINN_full.png" />
+</p>
