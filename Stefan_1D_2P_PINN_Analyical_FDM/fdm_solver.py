@@ -1,5 +1,3 @@
-# fdm_solver.py
-# ============================================================
 # Explicit and implicit FDM solvers for 1D Stefan laser melting
 # using fixed-grid effective heat capacity / enthalpy formulation.
 #
@@ -19,16 +17,12 @@
 #
 # Far boundary:
 #   T(z_max,t) = T0
-# ============================================================
 
 import numpy as np
 from scipy.special import erfc
 from scipy.linalg import solve_banded
 
-
-# ============================================================
 # Mathematical helpers
-# ============================================================
 
 def ierfc(x):
     """
@@ -129,9 +123,7 @@ def relative_l2_error(y_pred, y_ref):
     return np.linalg.norm(y_pred - y_ref) / (np.linalg.norm(y_ref) + 1e-30)
 
 
-# ============================================================
 # Material coefficient helpers
-# ============================================================
 
 def _specific_heats_from_diffusivity(mat):
     """
@@ -217,9 +209,7 @@ def _make_grid_and_time(mat, t_start, t_end, z_max, Nz, dt=None, safety=0.35):
     return z, dz, t_arr, dt_actual, Nt
 
 
-# ============================================================
 # Explicit FDM solver
-# ============================================================
 
 def solve_fdm_enthalpy_explicit(
     mat,
@@ -327,9 +317,7 @@ def solve_fdm_enthalpy_explicit(
 solve_fdm_enthalpy = solve_fdm_enthalpy_explicit
 
 
-# ============================================================
 # Implicit FDM solver
-# ============================================================
 
 def solve_fdm_enthalpy_implicit(
     mat,
