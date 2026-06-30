@@ -1,5 +1,3 @@
-# compare_fdm_pinn_analytical.py
-# ============================================================
 # Run explicit and implicit FDM baselines for:
 #
 # 1) Ag, Al, Cu, Ti:
@@ -13,7 +11,6 @@
 # Saves:
 #   plots/
 #   results/
-# ============================================================
 
 import os
 import time
@@ -62,11 +59,6 @@ COLORS_TI64 = {
     500: "#2ca02c",
     5000: "#d62728",
 }
-
-
-# ============================================================
-# Solver wrapper
-# ============================================================
 
 def call_solver(
     scheme,
@@ -122,9 +114,7 @@ def call_solver(
     raise ValueError("scheme must be 'explicit' or 'implicit'")
 
 
-# ============================================================
 # 1. Ag / Al / Cu / Ti
-# ============================================================
 
 def run_long_materials(
     scheme="explicit",
@@ -325,9 +315,7 @@ def print_summary_long(results, scheme):
         print(f"{name:<10} {res['S'][-1] * 100:>15.6f} {mat['t_melt']:>20.6e}")
 
 
-# ============================================================
 # 2. Ti-6Al-4V
-# ============================================================
 
 def run_ti64(
     scheme="explicit",
@@ -478,9 +466,7 @@ def print_summary_ti64(results, scheme):
         print(f"{str(I_kW_cm2) + ' kW/cm²':<20} {res['S'][-1] * 1e6:>15.6f}")
 
 
-# ============================================================
 # 3. Compare explicit vs implicit
-# ============================================================
 
 def plot_explicit_vs_implicit_long(explicit_results, implicit_results):
     plt.figure(figsize=(10, 6))
@@ -582,9 +568,7 @@ def print_comparison_table_ti64(explicit_results, implicit_results):
         print(f"{str(I_kW_cm2) + ' kW/cm²':<20} {e:>15.6f} {im:>15.6f} {diff:>12.3f}")
 
 
-# ============================================================
 # Main
-# ============================================================
 
 if __name__ == "__main__":
     print("=" * 80)
