@@ -1,17 +1,3 @@
-# ============================================================
-# plot_comparison.py
-# Publication figures: FDM vs PINN vs Analytical
-#
-# Читает готоinые данные from results/ — не требует переобучения.
-# Графики сохраняются in plots/comparison/
-#
-# ЗАПУСК:
-#   python plot_comparison.py                  # inсе материалы + Ti-6Al-4V
-#   python plot_comparison.py --metals-only    # только Ag/Al/Cu/Ti
-#   python plot_comparison.py --ti64-only      # только Ti-6Al-4V
-#   python plot_comparison.py --material Ag    # один металл
-# ============================================================
-
 import argparse
 import os
 import numpy as np
@@ -21,7 +7,6 @@ import matplotlib.gridspec as gridspec
 from matplotlib.lines import Line2D
 from scipy.special import erfcinv
 
-# ── Стиль публикации ──────────────────────────────────────
 matplotlib.rcParams.update({
     "font.family":       "DejaVu Sans",
     "font.size":         11,
@@ -39,7 +24,6 @@ matplotlib.rcParams.update({
     "lines.linewidth":   2.0,
 })
 
-# ── Параметры материалоin ──────────────────────────────────
 METALS = {
     "Ag": dict(
         rho_s=10500, ks=429, kl=361,
@@ -93,10 +77,7 @@ RESULTS_DIR = "results"
 OUT_DIR     = os.path.join("plots", "comparison")
 
 
-# ── Аналитические решения ─────────────────────────────────
-
 def analytic_metal(t_arr, mat):
-    """Кinазистационарное решение for Ag/Al/Cu/Ti (reference)."""
     AI_l    = float(mat["A_l"]) * float(mat["I_laser"])
     ks      = float(mat["ks"])
     alpha_s = float(mat["alpha_s"])
@@ -118,7 +99,6 @@ def analytic_metal(t_arr, mat):
 
 
 def analytic_ngwenya(t_arr, AI_eff, ks, alpha_s, Tm, T0):
-    """Кinазистационарное решение Ngwenya for Ti-6Al-4V (reference)."""
     t_arr  = np.asarray(t_arr, dtype=np.float64)
     X      = np.zeros_like(t_arr)
     t_melt = np.pi / (4.0 * alpha_s) * (ks * (Tm - T0) / AI_eff)**2
@@ -133,8 +113,6 @@ def analytic_ngwenya(t_arr, AI_eff, ks, alpha_s, Tm, T0):
             X[i] = 2.0 * np.sqrt(alpha_s * t) * erfcinv(ratio)
     return X
 
-
-# ── Загрузка данных ───────────────────────────────────────
 
 def load_fdm(name, explicit=True):
     scheme = "explicit" if explicit else "implicit"
@@ -155,15 +133,6 @@ def load_fdm_ti64(I_kW, explicit=True):
 
 
 def load_pinn(name, version="v2"):
-    """
-    Загружает PINN results.
-    Ожидает файл results/pinn_{version}_{name}.npz
-    с полями t, S.
-
-    Файл создаётся аinтоматически если добаinить in конец
-    Stefan_1D_2P_direct_metals_v2.py строки:
-        np.savez(f"results/pinn_v2_{name}.npz", t=t_melt_plot, S=S_pinn)
-    """
     path = os.path.join(RESULTS_DIR, f"pinn_{version}_{name}.npz")
     if not os.path.exists(path):
         return None
@@ -179,10 +148,7 @@ def load_pinn_ti64(I_kW, version="v2"):
     return {"t": d["t"], "S": d["S"]}
 
 
-# ── Вычисление метрик ─────────────────────────────────────
-
 def metrics(S_pinn, t_pinn, S_ref, t_ref):
-    """L2 error PINN vs reference на соinмещённой сетке."""
     S_interp  = np.interp(t_ref, t_pinn, S_pinn)
     err_final = abs(S_interp[-1] - S_ref[-1]) / (abs(S_ref[-1]) + 1e-30) * 100
     err_l2    = (np.linalg.norm(S_interp - S_ref) /
@@ -190,19 +156,12 @@ def metrics(S_pinn, t_pinn, S_ref, t_ref):
     return err_final, err_l2
 
 
-# ── График for одного металла ─────────────────────────────
-
 def plot_single_metal(name, ax_main, ax_err):
-    """
-    ax_main : ось for S(t)
-    ax_err  : ось for ошибки PINN−FDM
-    """
     mat   = METALS[name]
     color = mat["color"]
     t_pre = np.linspace(0.0, mat["t_melt"], 80)
     t_plot = np.linspace(mat["t_melt"], mat["t_max"], 800)
 
-    # ── Analytical ─────────────────────────────────────────
     S_anal = analytic_metal(t_plot, mat)
     t_full = np.concatenate([t_pre, t_plot])
     S_full = np.concatenate([np.zeros_like(t_pre), S_anal])
@@ -219,7 +178,6 @@ def plot_single_metal(name, ax_main, ax_err):
     else:
         print(f"  [!] FDM data not found for {name}")
 
-    # ── FDM implicit (for сраinнения схем) ─────────────────
     fdm_imp = load_fdm(name, explicit=False)
     if fdm_imp is not None:
         ax_main.plot(fdm_imp["t"], fdm_imp["S"] * 100,
@@ -256,7 +214,6 @@ def plot_single_metal(name, ax_main, ax_err):
                     ha="center", va="center",
                     fontsize=9, color="gray")
 
-    # ── Оформление ────────────────────────────────────────
     ax_main.axvline(mat["t_melt"], color="gray", lw=0.8, ls=":",
                     alpha=0.7, label=f"$t_{{melt}}={mat['t_melt']:.3g}$ с")
     ax_main.set_xlim(0, mat["t_max"])
@@ -271,7 +228,6 @@ def plot_single_metal(name, ax_main, ax_err):
     ax_err.set_xlabel("Time (s)")
 
 
-# ── Individual plot (2 панели: S(t) + ошибка) ──────
 
 def plot_metal_individual(name):
     fig, (ax1, ax2) = plt.subplots(
@@ -282,7 +238,6 @@ def plot_metal_individual(name):
     plot_single_metal(name, ax1, ax2)
     ax1.set_xlabel("")
 
-    # Общая легенда for линий
     legend_lines = [
         Line2D([0], [0], color="black",          lw=1.4, ls="--",  label="Analytical"),
         Line2D([0], [0], color=METALS[name]["color"], lw=2.2, ls="-",   label="FDM explicit (reference)"),
@@ -303,8 +258,6 @@ def plot_metal_individual(name):
     print(f"  Saved: {path}")
 
 
-# ── Сinодный 2×2 for inсех металлоin ────────────────────────
-
 def plot_metals_grid():
     fig = plt.figure(figsize=(14, 11))
     gs  = gridspec.GridSpec(2, 2, hspace=0.38, wspace=0.32)
@@ -322,7 +275,6 @@ def plot_metals_grid():
         plt.setp(ax_main.get_xticklabels(), visible=False)
         plot_single_metal(name, ax_main, ax_err)
 
-    # Общая легенда снfromу
     legend_handles = [
         Line2D([0], [0], color="black", lw=1.4, ls="--", label="Analytical"),
         Line2D([0], [0], color="gray",  lw=2.2, ls="-",  label="FDM explicit (reference)"),
@@ -473,7 +425,6 @@ def plot_ti64_grid():
     plt.close()
     print(f"  Saved: {path}")
 
-# ── Объединённый график inсех металлоin на одной оси ────────
 
 def plot_metals_combined():
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -506,7 +457,6 @@ def plot_metals_combined():
                 color=color, lw=2.2, ls="-.",
             )
 
-    # Легенда
     legend_handles = [
         Line2D([0], [0], color="black", lw=1.2, ls="--", alpha=0.5, label="Analytical (reference)"),
         Line2D([0], [0], color="black", lw=2.2, ls="-",             label="FDM explicit"),
@@ -531,8 +481,6 @@ def plot_metals_combined():
     plt.close()
     print(f"  Saved: {path}")
 
-
-# ── Ti-6Al-4V: индиinидуальный (2 панели) ─────────────────
 
 def plot_ti64_individual(I_kW):
     mat = TI64
@@ -610,8 +558,6 @@ def plot_ti64_individual(I_kW):
     print(f"  Saved: {path}")
 
 
-# ── Ti-6Al-4V: inсе интеnsиinности на одном графике ─────────
-
 def plot_ti64_combined():
     mat = TI64
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -666,8 +612,6 @@ def plot_ti64_combined():
     plt.close()
     print(f"  Saved: {path}")
 
-
-# ── Итогоinая таблица метрик ───────────────────────────────
 
 def print_metrics_table():
     print("\n" + "=" * 72)
@@ -753,7 +697,6 @@ if __name__ == "__main__":
         plot_ti64_combined()
 
     else:
-        # По умолчанию — inсё
         print("\n── Ag / Al / Cu / Ti ──")
         for name in METALS:
             print(f"  {name}...")
