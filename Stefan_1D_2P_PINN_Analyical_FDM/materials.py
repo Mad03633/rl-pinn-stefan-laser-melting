@@ -1,5 +1,3 @@
-# materials.py
-# ============================================================
 # Material parameters for explicit/implicit FDM baseline
 # of 1D Stefan laser melting.
 #
@@ -13,7 +11,6 @@
 #   Ngwenya-style comparison
 #   t = 0 ... 7 μs
 #   I = 5, 50, 500, 5000 kW/cm² with I_scale = 1000
-# ============================================================
 
 
 MATERIALS_LONG = {
