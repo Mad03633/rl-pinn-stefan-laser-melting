@@ -1,0 +1,401 @@
+=================================================================
+  PINN — Ti-6Al-4V  |  I = 5 kW/cm²
+  AI_eff = 2.165e+10 W/m²
+=================================================================
+  FDM loaded: X_final = 6.767 μm
+
+  ── FDM vs Ngwenya ──────────────────────────
+  FDM X(t_max)     = 6.767 μm
+  Ngwenya X(t_max) = 11.316 μm
+  Ngwenya overestimates by 67.2%
+
+  FDM sup: X_pts=3000, Ts_pts=655
+  [Stefan1D2P] AI_eff=2.165e+10 W/m²
+  [Stefan1D2P] X_max_est=6.77 μm  (from FDM if provided)
+  [Stefan1D2P] X_scale=20.30 μm
+  [Stefan1D2P] dT_l=8016 K  t_melt=306.3 ns
+  [Stefan1D2P] w_fdm_X=1000.0  w_fdm_Ts=80.0
+  [Stefan1D2P] Ngwenya weights: X=0.0, Ts=0.0, Tl=0.0
+2026-06-14 16:25:43.694779: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX AVX2
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-06-14 16:25:45.067858: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1616] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 1767 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 3050 Laptop GPU, pci bus id: 0000:01:00.0, compute capability: 8.6
+2026-06-14 16:25:45.121960: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:354] MLIR V1 optimization pass is not enabled
+
+--- Phase 1: supervision warm-up (phys=0) ---
+2026-06-14 16:25:46.875509: I tensorflow/stream_executor/cuda/cuda_blas.cc:1614] TensorFloat-32 will be used for the matrix multiplication. This will only be logged once.
+it      0 | loss 1.745e+01 [p=3.22e+03 ng=0.00e+00 fdm=1.74e+01] | PDE 1.04e-01/2.15e-02 | IC 3.29e+00 | BC 7.61e-01/2.32e-01 | LXT 3.78e+00 LXS 5.65e-03 | [Sup] Ng_X=9.07e-03 FDM_X=3.43e-03
+it   2000 | loss 1.998e-02 [p=3.26e+03 ng=0.00e+00 fdm=2.00e-02] | PDE 1.04e-01/4.64e+00 | IC 3.75e+00 | BC 7.61e-01/4.37e-10 | LXT 3.82e+00 LXS 6.46e-03 | [Sup] Ng_X=2.35e-02 FDM_X=6.83e-06
+it   4000 | loss 6.055e-03 [p=3.26e+03 ng=0.00e+00 fdm=6.05e-03] | PDE 1.04e-01/1.13e+01 | IC 3.73e+00 | BC 7.61e-01/1.48e-11 | LXT 3.83e+00 LXS 6.66e-03 | [Sup] Ng_X=2.36e-02 FDM_X=2.45e-06
+it   6000 | loss 4.115e-03 [p=3.27e+03 ng=0.00e+00 fdm=4.11e-03] | PDE 1.04e-01/1.57e+01 | IC 3.73e+00 | BC 7.61e-01/4.96e-12 | LXT 3.83e+00 LXS 6.72e-03 | [Sup] Ng_X=2.36e-02 FDM_X=1.44e-06
+it   8000 | loss 3.072e-03 [p=3.28e+03 ng=0.00e+00 fdm=3.07e-03] | PDE 1.04e-01/2.60e+01 | IC 3.73e+00 | BC 7.61e-01/5.39e-13 | LXT 3.83e+00 LXS 6.78e-03 | [Sup] Ng_X=2.36e-02 FDM_X=1.13e-06
+
+--- Phase  2a: physics warm-in (phys=0.01) ---
+it      0 | loss 1.253e+01 [p=1.10e+03 ng=0.00e+00 fdm=1.52e+00] | PDE 1.67e-02/1.96e+01 | IC 1.40e+01 | BC 1.24e+00/4.18e-13 | LXT 8.59e-01 LXS 4.61e-02 | [Sup] Ng_X=1.39e-02 FDM_X=1.51e-03
+it   1000 | loss 1.352e-01 [p=1.17e+01 ng=0.00e+00 fdm=1.85e-02] | PDE 3.67e-01/5.22e-01 | IC 4.56e-02 | BC 1.45e-02/0.00e+00 | LXT 1.59e-03 LXS 5.29e-02 | [Sup] Ng_X=2.35e-02 FDM_X=3.96e-06
+it   2000 | loss 8.033e-02 [p=7.06e+00 ng=0.00e+00 fdm=9.77e-03] | PDE 3.40e-01/1.02e+00 | IC 2.06e-02 | BC 4.37e-03/0.00e+00 | LXT 1.29e-03 LXS 2.09e-02 | [Sup] Ng_X=2.36e-02 FDM_X=3.73e-06
+it   3000 | loss 6.666e-02 [p=5.64e+00 ng=0.00e+00 fdm=1.03e-02] | PDE 2.79e-01/1.18e+00 | IC 1.46e-02 | BC 1.87e-03/0.00e+00 | LXT 1.65e-03 LXS 5.29e-03 | [Sup] Ng_X=2.35e-02 FDM_X=3.62e-06
+it   4000 | loss 7.313e-02 [p=5.76e+00 ng=0.00e+00 fdm=1.55e-02] | PDE 2.49e-01/1.43e+00 | IC 1.40e-02 | BC 7.35e-04/0.00e+00 | LXT 1.04e-03 LXS 1.31e-02 | [Sup] Ng_X=2.37e-02 FDM_X=3.59e-06
+it   5000 | loss 5.698e-02 [p=5.03e+00 ng=0.00e+00 fdm=6.71e-03] | PDE 2.35e-01/1.38e+00 | IC 1.31e-02 | BC 6.48e-04/0.00e+00 | LXT 1.03e-03 LXS 5.13e-03 | [Sup] Ng_X=2.36e-02 FDM_X=3.13e-06
+
+--- Phase 2b: полная физика + sup (phys=1) ---
+it      0 | loss 9.460e+02 [p=9.45e+02 ng=0.00e+00 fdm=9.70e-01] | PDE 1.18e-01/2.60e-02 | IC 1.48e-03 | BC 2.43e-01/0.00e+00 | LXT 1.11e+00 LXS 5.46e-02 | [Sup] Ng_X=1.89e-02 FDM_X=2.78e-04
+it   2000 | loss 5.826e+00 [p=5.75e+00 ng=0.00e+00 fdm=7.74e-02] | PDE 5.57e-01/1.46e+00 | IC 1.61e-02 | BC 1.02e-03/0.00e+00 | LXT 6.85e-04 LXS 1.40e-02 | [Sup] Ng_X=2.31e-02 FDM_X=4.12e-05
+it   4000 | loss 5.095e+00 [p=5.05e+00 ng=0.00e+00 fdm=4.50e-02] | PDE 2.39e-01/1.48e+00 | IC 1.33e-02 | BC 3.29e-04/0.00e+00 | LXT 5.86e-04 LXS 1.11e-02 | [Sup] Ng_X=2.35e-02 FDM_X=1.59e-05
+it   6000 | loss 4.873e+00 [p=4.84e+00 ng=0.00e+00 fdm=3.69e-02] | PDE 1.68e-01/1.39e+00 | IC 1.30e-02 | BC 3.11e-04/0.00e+00 | LXT 5.51e-04 LXS 1.09e-02 | [Sup] Ng_X=2.34e-02 FDM_X=1.42e-05
+it   8000 | loss 4.479e+00 [p=4.45e+00 ng=0.00e+00 fdm=3.37e-02] | PDE 1.35e-01/1.28e+00 | IC 1.29e-02 | BC 3.65e-04/0.00e+00 | LXT 5.45e-04 LXS 8.09e-03 | [Sup] Ng_X=2.34e-02 FDM_X=1.27e-05
+it  10000 | loss 4.397e+00 [p=4.37e+00 ng=0.00e+00 fdm=3.06e-02] | PDE 1.24e-01/1.24e+00 | IC 1.31e-02 | BC 3.53e-04/0.00e+00 | LXT 4.89e-04 LXS 8.79e-03 | [Sup] Ng_X=2.34e-02 FDM_X=1.44e-05
+it  12000 | loss 3.983e+00 [p=3.96e+00 ng=0.00e+00 fdm=2.63e-02] | PDE 1.15e-01/1.13e+00 | IC 1.28e-02 | BC 3.77e-04/0.00e+00 | LXT 6.62e-04 LXS 3.70e-03 | [Sup] Ng_X=2.34e-02 FDM_X=1.48e-05
+it  14000 | loss 3.953e+00 [p=3.93e+00 ng=0.00e+00 fdm=2.52e-02] | PDE 1.10e-01/1.11e+00 | IC 1.30e-02 | BC 4.17e-04/0.00e+00 | LXT 5.50e-04 LXS 4.96e-03 | [Sup] Ng_X=2.35e-02 FDM_X=1.51e-05
+it  16000 | loss 4.235e+00 [p=4.21e+00 ng=0.00e+00 fdm=2.51e-02] | PDE 1.04e-01/1.11e+00 | IC 1.31e-02 | BC 3.85e-04/0.00e+00 | LXT 4.43e-04 LXS 9.98e-03 | [Sup] Ng_X=2.35e-02 FDM_X=1.69e-05
+it  18000 | loss 4.433e+00 [p=4.41e+00 ng=0.00e+00 fdm=2.48e-02] | PDE 9.28e-02/1.08e+00 | IC 1.31e-02 | BC 3.40e-04/0.00e+00 | LXT 4.37e-04 LXS 1.33e-02 | [Sup] Ng_X=2.34e-02 FDM_X=1.79e-05
+it  20000 | loss 3.933e+00 [p=3.91e+00 ng=0.00e+00 fdm=2.47e-02] | PDE 8.97e-02/9.20e-01 | IC 1.24e-02 | BC 5.72e-04/0.00e+00 | LXT 9.47e-04 LXS 3.69e-03 | [Sup] Ng_X=2.33e-02 FDM_X=1.83e-05
+
+--- Phase 3: fine-tune lr=1e-4 ---
+it      0 | loss 3.787e+00 [p=3.76e+00 ng=0.00e+00 fdm=2.46e-02] | PDE 8.93e-02/9.30e-01 | IC 1.25e-02 | BC 5.49e-04/0.00e+00 | LXT 8.29e-04 LXS 2.96e-03 | [Sup] Ng_X=2.33e-02 FDM_X=1.81e-05
+it   2000 | loss 3.618e+00 [p=3.59e+00 ng=0.00e+00 fdm=2.50e-02] | PDE 6.29e-02/9.65e-01 | IC 1.26e-02 | BC 4.30e-04/0.00e+00 | LXT 6.09e-04 LXS 3.31e-03 | [Sup] Ng_X=2.35e-02 FDM_X=1.74e-05
+it   4000 | loss 3.563e+00 [p=3.54e+00 ng=0.00e+00 fdm=2.59e-02] | PDE 4.88e-02/9.42e-01 | IC 1.25e-02 | BC 4.28e-04/0.00e+00 | LXT 6.01e-04 LXS 3.27e-03 | [Sup] Ng_X=2.35e-02 FDM_X=1.80e-05
+it   6000 | loss 3.521e+00 [p=3.49e+00 ng=0.00e+00 fdm=2.65e-02] | PDE 4.16e-02/9.09e-01 | IC 1.24e-02 | BC 4.31e-04/0.00e+00 | LXT 6.09e-04 LXS 3.25e-03 | [Sup] Ng_X=2.36e-02 FDM_X=1.86e-05
+it   8000 | loss 3.484e+00 [p=3.46e+00 ng=0.00e+00 fdm=2.61e-02] | PDE 3.82e-02/8.92e-01 | IC 1.24e-02 | BC 4.12e-04/0.00e+00 | LXT 5.44e-04 LXS 3.80e-03 | [Sup] Ng_X=2.36e-02 FDM_X=1.87e-05
+it  10000 | loss 3.434e+00 [p=3.41e+00 ng=0.00e+00 fdm=2.61e-02] | PDE 3.57e-02/8.62e-01 | IC 1.21e-02 | BC 4.25e-04/0.00e+00 | LXT 5.75e-04 LXS 3.33e-03 | [Sup] Ng_X=2.36e-02 FDM_X=1.88e-05
+it  12000 | loss 3.434e+00 [p=3.41e+00 ng=0.00e+00 fdm=2.52e-02] | PDE 3.43e-02/8.49e-01 | IC 1.21e-02 | BC 4.26e-04/0.00e+00 | LXT 5.48e-04 LXS 3.82e-03 | [Sup] Ng_X=2.37e-02 FDM_X=1.84e-05
+it  14000 | loss 3.377e+00 [p=3.35e+00 ng=0.00e+00 fdm=2.55e-02] | PDE 3.41e-02/8.22e-01 | IC 1.18e-02 | BC 4.26e-04/0.00e+00 | LXT 5.60e-04 LXS 3.37e-03 | [Sup] Ng_X=2.36e-02 FDM_X=1.87e-05
+
+--- Phase 4: polish lr=5e-5 ---
+it      0 | loss 3.595e-01 [p=3.34e+00 ng=0.00e+00 fdm=2.53e-02] | PDE 3.40e-02/8.10e-01 | IC 1.17e-02 | BC 4.26e-04/0.00e+00 | LXT 5.69e-04 LXS 3.33e-03 | [Sup] Ng_X=2.36e-02 FDM_X=1.87e-05
+it   2000 | loss 3.499e-01 [p=3.37e+00 ng=0.00e+00 fdm=1.34e-02] | PDE 3.64e-02/8.37e-01 | IC 1.17e-02 | BC 4.34e-04/0.00e+00 | LXT 5.36e-04 LXS 3.43e-03 | [Sup] Ng_X=2.36e-02 FDM_X=1.05e-05
+it   4000 | loss 3.485e-01 [p=3.36e+00 ng=0.00e+00 fdm=1.24e-02] | PDE 3.77e-02/8.36e-01 | IC 1.16e-02 | BC 4.26e-04/0.00e+00 | LXT 5.30e-04 LXS 3.46e-03 | [Sup] Ng_X=2.36e-02 FDM_X=9.64e-06
+it   6000 | loss 3.466e-01 [p=3.35e+00 ng=0.00e+00 fdm=1.20e-02] | PDE 3.87e-02/8.21e-01 | IC 1.15e-02 | BC 4.27e-04/0.00e+00 | LXT 5.31e-04 LXS 3.42e-03 | [Sup] Ng_X=2.36e-02 FDM_X=9.28e-06
+it   8000 | loss 3.454e-01 [p=3.34e+00 ng=0.00e+00 fdm=1.18e-02] | PDE 3.79e-02/8.11e-01 | IC 1.15e-02 | BC 4.19e-04/0.00e+00 | LXT 5.01e-04 LXS 3.76e-03 | [Sup] Ng_X=2.36e-02 FDM_X=9.14e-06
+
+--- Phase 5: restore physics lr=2e-5 ---
+it      0 | loss 5.467e+00 [p=5.45e+00 ng=0.00e+00 fdm=1.52e-02] | PDE 3.91e-02/7.73e-01 | IC 1.08e-02 | BC 5.48e-04/0.00e+00 | LXT 1.32e-03 LXS 2.22e-02 | [Sup] Ng_X=2.32e-02 FDM_X=1.16e-05
+it   1000 | loss 3.313e+00 [p=3.29e+00 ng=0.00e+00 fdm=1.98e-02] | PDE 3.48e-02/7.85e-01 | IC 1.15e-02 | BC 4.21e-04/0.00e+00 | LXT 5.40e-04 LXS 3.38e-03 | [Sup] Ng_X=2.36e-02 FDM_X=1.40e-05
+it   2000 | loss 3.306e+00 [p=3.28e+00 ng=0.00e+00 fdm=2.09e-02] | PDE 3.43e-02/7.76e-01 | IC 1.14e-02 | BC 4.22e-04/0.00e+00 | LXT 5.42e-04 LXS 3.37e-03 | [Sup] Ng_X=2.36e-02 FDM_X=1.48e-05
+it   3000 | loss 3.297e+00 [p=3.28e+00 ng=0.00e+00 fdm=2.13e-02] | PDE 3.33e-02/7.70e-01 | IC 1.14e-02 | BC 4.22e-04/0.00e+00 | LXT 5.42e-04 LXS 3.35e-03 | [Sup] Ng_X=2.36e-02 FDM_X=1.52e-05
+it   4000 | loss 3.286e+00 [p=3.26e+00 ng=0.00e+00 fdm=2.17e-02] | PDE 3.23e-02/7.64e-01 | IC 1.14e-02 | BC 4.17e-04/0.00e+00 | LXT 5.34e-04 LXS 3.42e-03 | [Sup] Ng_X=2.36e-02 FDM_X=1.56e-05
+it   5000 | loss 3.271e+00 [p=3.25e+00 ng=0.00e+00 fdm=2.21e-02] | PDE 3.16e-02/7.54e-01 | IC 1.13e-02 | BC 4.18e-04/0.00e+00 | LXT 5.39e-04 LXS 3.30e-03 | [Sup] Ng_X=2.36e-02 FDM_X=1.59e-05
+
+  Learning time: 84.5 min
+
+  ── Metrics (FDM) ──────────────────
+  FDM  X(t_max) = 6.7670 μm
+  PINN X(t_max) = 6.8987 μm
+  Final error: 1.95%
+  L2 error X(t): 2.04%
+
+  ── (Ngwenya) ────────
+  Ngwenya X(t_max) = 11.3165 μm
+  [save] PINN results: results\pinn_v2_Ti64_5kWcm2.npz
+         X(t_max) = 6.8987 μm
+  PINN vs Ngwenya:  39.0%
+  Graph: plots\pinn_v2_Ti64_5kW_fdm_comparison.png
+
+===========================================================================
+Results — Ti-6Al-4V | PINN vs FDM vs Ngwenya
+===========================================================================
+I (kW/cm²)        FDM X (μm)    PINN X (μm)   Δfinal %     L2 %
+-----------------------------------------------------------------
+5                      6.767          6.899       1.95     2.04
+
+----------------------------------------------------------------------------------
+
+=================================================================
+  PINN — Ti-6Al-4V  |  I = 50 kW/cm²
+  AI_eff = 2.165e+11 W/m²
+=================================================================
+  FDM loaded: X_final = 16.525 μm
+
+  ── FDM vs Ngwenya ──────────────────────────
+  FDM X(t_max)     = 16.525 μm
+  Ngwenya X(t_max) = 20.811 μm
+  Ngwenya overestimates by 25.9%
+
+  FDM sup: X_pts=3000, Ts_pts=591
+  [Stefan1D2P] AI_eff=2.165e+11 W/m²
+  [Stefan1D2P] X_max_est=16.53 μm  (from FDM if provided)
+  [Stefan1D2P] X_scale=49.58 μm
+  [Stefan1D2P] dT_l=149999 K  t_melt=3.1 ns
+  [Stefan1D2P] w_fdm_X=1000.0  w_fdm_Ts=80.0
+  [Stefan1D2P] Ngwenya weights: X=0.0, Ts=0.0, Tl=0.0
+2026-06-15 02:58:33.617696: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX AVX2
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-06-15 02:58:35.985981: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1616] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 1767 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 3050 Laptop GPU, pci bus id: 0000:01:00.0, compute capability: 8.6
+2026-06-15 02:58:36.054181: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:354] MLIR V1 optimization pass is not enabled
+
+--- Phase 1: supervision warm-up (phys=0) ---
+2026-06-15 02:58:37.961583: I tensorflow/stream_executor/cuda/cuda_blas.cc:1614] TensorFloat-32 will be used for the matrix multiplication. This will only be logged once.
+it      0 | loss 1.678e+01 [p=2.23e+06 ng=0.00e+00 fdm=1.68e+01] | PDE 2.39e+00/2.07e-02 | IC 2.15e+03 | BC 8.14e-01/2.26e-01 | LXT 2.76e+03 LXS 8.49e-03 | [Sup] Ng_X=1.18e-03 FDM_X=1.88e-03
+it   2000 | loss 2.067e-01 [p=2.28e+06 ng=0.00e+00 fdm=2.07e-01] | PDE 2.39e+00/6.63e+00 | IC 2.15e+03 | BC 8.14e-01/0.00e+00 | LXT 2.82e+03 LXS 9.15e-03 | [Sup] Ng_X=3.90e-03 FDM_X=4.97e-06
+it   4000 | loss 1.763e-01 [p=2.28e+06 ng=0.00e+00 fdm=1.76e-01] | PDE 2.39e+00/5.23e+01 | IC 2.15e+03 | BC 8.14e-01/0.00e+00 | LXT 2.82e+03 LXS 9.15e-03 | [Sup] Ng_X=3.83e-03 FDM_X=2.59e-06
+it   6000 | loss 1.745e-01 [p=2.28e+06 ng=0.00e+00 fdm=1.75e-01] | PDE 2.39e+00/1.56e+02 | IC 2.15e+03 | BC 8.14e-01/0.00e+00 | LXT 2.82e+03 LXS 9.15e-03 | [Sup] Ng_X=3.87e-03 FDM_X=2.08e-06
+it   8000 | loss 1.738e-01 [p=2.28e+06 ng=0.00e+00 fdm=1.74e-01] | PDE 2.39e+00/2.25e+02 | IC 2.15e+03 | BC 8.14e-01/0.00e+00 | LXT 2.82e+03 LXS 9.14e-03 | [Sup] Ng_X=3.83e-03 FDM_X=1.67e-06
+
+--- Phase  2a: physics warm-in (phys=0.01) ---
+it      0 | loss 1.137e+04 [p=1.14e+06 ng=0.00e+00 fdm=1.36e+01] | PDE 6.02e-01/2.16e+02 | IC 3.34e+03 | BC 1.19e+00/0.00e+00 | LXT 1.38e+03 LXS 1.80e-02 | [Sup] Ng_X=3.62e-03 FDM_X=1.28e-02
+it   1000 | loss 9.525e+00 [p=9.31e+02 ng=0.00e+00 fdm=2.15e-01] | PDE 2.48e-01/1.38e+00 | IC 1.57e-01 | BC 1.00e+00/0.00e+00 | LXT 9.10e-01 LXS 5.87e-04 | [Sup] Ng_X=3.83e-03 FDM_X=2.23e-05
+it   2000 | loss 9.303e+00 [p=9.11e+02 ng=0.00e+00 fdm=1.96e-01] | PDE 1.52e-01/4.25e-01 | IC 6.56e-02 | BC 1.00e+00/0.00e+00 | LXT 8.86e-01 LXS 8.05e-04 | [Sup] Ng_X=3.84e-03 FDM_X=1.76e-05
+it   3000 | loss 1.427e+00 [p=1.22e+02 ng=0.00e+00 fdm=2.03e-01] | PDE 2.77e-01/3.57e-01 | IC 1.24e-01 | BC 5.48e-01/0.00e+00 | LXT 1.36e-02 LXS 3.04e-04 | [Sup] Ng_X=3.68e-03 FDM_X=2.74e-05
+it   4000 | loss 7.465e-01 [p=5.67e+01 ng=0.00e+00 fdm=1.79e-01] | PDE 1.11e+00/3.71e-01 | IC 8.29e-02 | BC 2.58e-01/0.00e+00 | LXT 3.15e-03 LXS 1.58e-03 | [Sup] Ng_X=3.83e-03 FDM_X=2.89e-06
+it   5000 | loss 5.536e-01 [p=3.72e+01 ng=0.00e+00 fdm=1.82e-01] | PDE 3.99e-01/3.97e-01 | IC 6.94e-02 | BC 1.67e-01/0.00e+00 | LXT 2.67e-03 LXS 1.92e-03 | [Sup] Ng_X=3.85e-03 FDM_X=6.75e-06
+
+--- Phase 2b: полная физика + sup (phys=1) ---
+it      0 | loss 6.208e+01 [p=6.14e+01 ng=0.00e+00 fdm=6.68e-01] | PDE 4.12e-01/1.38e-01 | IC 5.91e-02 | BC 1.63e-01/0.00e+00 | LXT 3.43e-02 LXS 8.14e-04 | [Sup] Ng_X=4.51e-03 FDM_X=4.96e-05
+it   2000 | loss 9.547e+00 [p=9.25e+00 ng=0.00e+00 fdm=2.96e-01] | PDE 5.70e-01/2.82e-01 | IC 4.11e-02 | BC 3.26e-02/0.00e+00 | LXT 7.53e-04 LXS 9.44e-03 | [Sup] Ng_X=4.26e-03 FDM_X=4.20e-05
+it   4000 | loss 4.960e+00 [p=4.72e+00 ng=0.00e+00 fdm=2.41e-01] | PDE 4.24e-01/4.46e-01 | IC 2.04e-02 | BC 8.31e-03/0.00e+00 | LXT 5.55e-04 LXS 1.79e-02 | [Sup] Ng_X=3.93e-03 FDM_X=2.96e-05
+it   6000 | loss 3.257e+00 [p=3.04e+00 ng=0.00e+00 fdm=2.22e-01] | PDE 3.12e-01/1.23e-01 | IC 1.25e-02 | BC 5.94e-03/0.00e+00 | LXT 2.24e-04 LXS 1.26e-02 | [Sup] Ng_X=3.77e-03 FDM_X=1.72e-05
+it   8000 | loss 6.397e+00 [p=6.16e+00 ng=0.00e+00 fdm=2.35e-01] | PDE 2.49e-01/3.96e-01 | IC 1.42e-01 | BC 4.63e-03/0.00e+00 | LXT 1.75e-03 LXS 2.09e-02 | [Sup] Ng_X=3.62e-03 FDM_X=1.19e-05
+it  10000 | loss 2.777e+00 [p=2.57e+00 ng=0.00e+00 fdm=2.09e-01] | PDE 1.97e-01/9.92e-02 | IC 9.64e-03 | BC 4.14e-03/0.00e+00 | LXT 7.88e-04 LXS 7.76e-03 | [Sup] Ng_X=3.42e-03 FDM_X=1.80e-05
+it  12000 | loss 1.831e+00 [p=1.64e+00 ng=0.00e+00 fdm=1.92e-01] | PDE 1.78e-01/1.89e-01 | IC 9.11e-03 | BC 3.03e-03/0.00e+00 | LXT 4.57e-05 LXS 5.54e-03 | [Sup] Ng_X=3.87e-03 FDM_X=4.74e-06
+it  14000 | loss 6.427e+00 [p=6.22e+00 ng=0.00e+00 fdm=2.05e-01] | PDE 1.27e-01/3.03e-01 | IC 1.69e-01 | BC 3.11e-03/0.00e+00 | LXT 2.20e-03 LXS 2.03e-02 | [Sup] Ng_X=3.44e-03 FDM_X=1.60e-05
+it  16000 | loss 6.073e+00 [p=5.82e+00 ng=0.00e+00 fdm=2.58e-01] | PDE 1.28e-01/2.63e-01 | IC 1.69e-01 | BC 3.05e-03/0.00e+00 | LXT 1.87e-03 LXS 1.92e-02 | [Sup] Ng_X=3.53e-03 FDM_X=1.87e-05
+it  18000 | loss 1.528e+00 [p=1.33e+00 ng=0.00e+00 fdm=1.93e-01] | PDE 1.39e-01/1.28e-01 | IC 8.83e-03 | BC 2.45e-03/0.00e+00 | LXT 2.32e-05 LXS 4.68e-03 | [Sup] Ng_X=3.65e-03 FDM_X=9.00e-06
+it  20000 | loss 1.658e+00 [p=1.47e+00 ng=0.00e+00 fdm=1.91e-01] | PDE 1.19e-01/1.06e-01 | IC 8.09e-03 | BC 2.50e-03/0.00e+00 | LXT 2.10e-04 LXS 4.97e-03 | [Sup] Ng_X=3.61e-03 FDM_X=8.52e-06
+
+--- Phase 3: fine-tune lr=1e-4 ---
+it      0 | loss 1.562e+00 [p=1.37e+00 ng=0.00e+00 fdm=1.91e-01] | PDE 1.19e-01/1.06e-01 | IC 8.12e-03 | BC 2.45e-03/0.00e+00 | LXT 9.66e-05 LXS 5.04e-03 | [Sup] Ng_X=3.63e-03 FDM_X=7.91e-06
+it   2000 | loss 1.389e+00 [p=1.20e+00 ng=0.00e+00 fdm=1.86e-01] | PDE 9.92e-02/9.42e-02 | IC 6.91e-03 | BC 2.27e-03/0.00e+00 | LXT 2.20e-05 LXS 4.66e-03 | [Sup] Ng_X=3.77e-03 FDM_X=4.03e-06
+it   4000 | loss 1.047e+00 [p=8.63e-01 ng=0.00e+00 fdm=1.84e-01] | PDE 1.05e-01/5.60e-02 | IC 6.17e-03 | BC 1.80e-03/0.00e+00 | LXT 9.57e-05 LXS 1.37e-03 | [Sup] Ng_X=3.82e-03 FDM_X=3.12e-06
+it   6000 | loss 8.940e-01 [p=7.12e-01 ng=0.00e+00 fdm=1.82e-01] | PDE 1.23e-01/1.83e-02 | IC 7.37e-03 | BC 1.39e-03/0.00e+00 | LXT 1.40e-04 LXS 1.59e-04 | [Sup] Ng_X=3.86e-03 FDM_X=3.40e-06
+it   8000 | loss 8.436e-01 [p=6.63e-01 ng=0.00e+00 fdm=1.81e-01] | PDE 1.10e-01/1.04e-02 | IC 7.20e-03 | BC 1.32e-03/0.00e+00 | LXT 1.27e-04 LXS 1.40e-04 | [Sup] Ng_X=3.83e-03 FDM_X=3.42e-06
+it  10000 | loss 7.790e-01 [p=6.00e-01 ng=0.00e+00 fdm=1.79e-01] | PDE 9.80e-02/8.24e-03 | IC 7.19e-03 | BC 1.20e-03/0.00e+00 | LXT 9.74e-05 LXS 1.15e-04 | [Sup] Ng_X=3.83e-03 FDM_X=3.17e-06
+it  12000 | loss 8.308e-01 [p=6.52e-01 ng=0.00e+00 fdm=1.79e-01] | PDE 8.69e-02/8.07e-03 | IC 7.32e-03 | BC 1.07e-03/0.00e+00 | LXT 2.09e-04 LXS 1.00e-04 | [Sup] Ng_X=3.85e-03 FDM_X=2.84e-06
+it  14000 | loss 7.178e-01 [p=5.40e-01 ng=0.00e+00 fdm=1.78e-01] | PDE 8.17e-02/5.80e-03 | IC 6.95e-03 | BC 1.07e-03/0.00e+00 | LXT 8.67e-05 LXS 7.23e-05 | [Sup] Ng_X=3.81e-03 FDM_X=2.67e-06
+
+--- Phase 4: polish lr=5e-5 ---
+it      0 | loss 2.289e-01 [p=5.09e-01 ng=0.00e+00 fdm=1.78e-01] | PDE 7.79e-02/5.12e-03 | IC 6.87e-03 | BC 1.01e-03/0.00e+00 | LXT 6.81e-05 LXS 8.30e-05 | [Sup] Ng_X=3.81e-03 FDM_X=2.58e-06
+it   2000 | loss 2.278e-01 [p=5.08e-01 ng=0.00e+00 fdm=1.77e-01] | PDE 7.63e-02/6.10e-03 | IC 6.84e-03 | BC 1.01e-03/0.00e+00 | LXT 6.77e-05 LXS 8.69e-05 | [Sup] Ng_X=3.84e-03 FDM_X=2.27e-06
+it   4000 | loss 2.268e-01 [p=5.02e-01 ng=0.00e+00 fdm=1.77e-01] | PDE 7.44e-02/6.11e-03 | IC 6.81e-03 | BC 1.01e-03/0.00e+00 | LXT 6.34e-05 LXS 8.91e-05 | [Sup] Ng_X=3.84e-03 FDM_X=2.13e-06
+it   6000 | loss 2.244e-01 [p=4.83e-01 ng=0.00e+00 fdm=1.76e-01] | PDE 7.19e-02/5.72e-03 | IC 6.78e-03 | BC 9.79e-04/0.00e+00 | LXT 4.97e-05 LXS 9.70e-05 | [Sup] Ng_X=3.83e-03 FDM_X=2.02e-06
+it   8000 | loss 2.206e-01 [p=4.50e-01 ng=0.00e+00 fdm=1.76e-01] | PDE 6.91e-02/4.76e-03 | IC 6.44e-03 | BC 9.42e-04/0.00e+00 | LXT 2.54e-05 LXS 1.13e-04 | [Sup] Ng_X=3.83e-03 FDM_X=1.91e-06
+
+--- Phase 5: restore physics lr=2e-5 ---
+it      0 | loss 6.426e-01 [p=4.67e-01 ng=0.00e+00 fdm=1.76e-01] | PDE 6.91e-02/5.30e-03 | IC 6.57e-03 | BC 9.23e-04/0.00e+00 | LXT 4.83e-05 LXS 1.24e-04 | [Sup] Ng_X=3.84e-03 FDM_X=1.92e-06
+it   1000 | loss 6.190e-01 [p=4.43e-01 ng=0.00e+00 fdm=1.76e-01] | PDE 7.02e-02/3.76e-03 | IC 6.39e-03 | BC 9.27e-04/0.00e+00 | LXT 2.18e-05 LXS 1.05e-04 | [Sup] Ng_X=3.81e-03 FDM_X=2.08e-06
+it   2000 | loss 6.122e-01 [p=4.36e-01 ng=0.00e+00 fdm=1.76e-01] | PDE 7.04e-02/3.48e-03 | IC 6.27e-03 | BC 9.13e-04/0.00e+00 | LXT 1.83e-05 LXS 1.04e-04 | [Sup] Ng_X=3.81e-03 FDM_X=2.11e-06
+it   3000 | loss 6.041e-01 [p=4.28e-01 ng=0.00e+00 fdm=1.76e-01] | PDE 7.11e-02/3.26e-03 | IC 6.15e-03 | BC 8.87e-04/0.00e+00 | LXT 1.68e-05 LXS 9.08e-05 | [Sup] Ng_X=3.81e-03 FDM_X=2.12e-06
+it   4000 | loss 5.975e-01 [p=4.21e-01 ng=0.00e+00 fdm=1.76e-01] | PDE 7.18e-02/2.95e-03 | IC 6.10e-03 | BC 8.60e-04/0.00e+00 | LXT 1.78e-05 LXS 7.03e-05 | [Sup] Ng_X=3.81e-03 FDM_X=2.12e-06
+it   5000 | loss 5.907e-01 [p=4.15e-01 ng=0.00e+00 fdm=1.76e-01] | PDE 7.23e-02/2.64e-03 | IC 6.01e-03 | BC 8.45e-04/3.21e-14 | LXT 1.52e-05 LXS 5.65e-05 | [Sup] Ng_X=3.81e-03 FDM_X=2.13e-06
+
+  Learning time: 84.1 min
+
+  ── Metrics (FDM) ──────────────────
+  FDM  X(t_max) = 16.5254 μm
+  PINN X(t_max) = 16.5508 μm
+  Final error: 0.15%
+  L2 error X(t): 0.65%
+
+  ── (Ngwenya) ────────
+  Ngwenya X(t_max) = 20.8109 μm
+  [save] PINN results: results\pinn_v2_Ti64_50kWcm2.npz
+         X(t_max) = 16.5508 μm
+  PINN vs Ngwenya:  20.5%
+  Graph: plots\pinn_v2_Ti64_50kW_fdm_comparison.png
+
+===========================================================================
+Results — Ti-6Al-4V | PINN vs FDM vs Ngwenya
+===========================================================================
+I (kW/cm²)        FDM X (μm)    PINN X (μm)   Δfinal %     L2 %
+-----------------------------------------------------------------
+50                    16.525         16.551       0.15     0.65
+
+---------------------------------------------------------------------------------
+
+=================================================================
+  PINN — Ti-6Al-4V  |  I = 500 kW/cm²
+  AI_eff = 2.165e+12 W/m²
+=================================================================
+  FDM loaded: X_final = 23.801 μm
+
+  ── FDM vs Ngwenya ──────────────────────────
+  FDM X(t_max)     = 23.801 μm
+  Ngwenya X(t_max) = 27.726 μm
+  Ngwenya overestimates by 16.5%
+
+  FDM sup: X_pts=3000, Ts_pts=543
+  [Stefan1D2P] AI_eff=2.165e+12 W/m²
+  [Stefan1D2P] X_max_est=23.80 μm  (from FDM if provided)
+  [Stefan1D2P] X_scale=71.40 μm
+  [Stefan1D2P] dT_l=2134226 K  t_melt=0.0 ns
+  [Stefan1D2P] w_fdm_X=1000.0  w_fdm_Ts=80.0
+  [Stefan1D2P] Ngwenya weights: X=0.0, Ts=0.0, Tl=0.0
+2026-06-15 11:11:30.938352: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX AVX2
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-06-15 11:11:33.247443: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1616] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 1767 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 3050 Laptop GPU, pci bus id: 0000:01:00.0, compute capability: 8.6
+2026-06-15 11:11:33.304948: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:354] MLIR V1 optimization pass is not enabled
+
+--- Phase 1: supervision warm-up (phys=0) ---
+2026-06-15 11:11:35.269046: I tensorflow/stream_executor/cuda/cuda_blas.cc:1614] TensorFloat-32 will be used for the matrix multiplication. This will only be logged once.
+it      0 | loss 1.943e+01 [p=4.67e+08 ng=0.00e+00 fdm=1.94e+01] | PDE 1.01e+01/1.90e-02 | IC 5.51e+05 | BC 8.16e-01/2.17e-01 | LXT 5.77e+05 LXS 1.10e-02 | [Sup] Ng_X=9.29e-04 FDM_X=1.75e-03
+it   2000 | loss 1.571e+00 [p=4.75e+08 ng=0.00e+00 fdm=1.57e+00] | PDE 1.01e+01/5.74e+00 | IC 5.51e+05 | BC 8.16e-01/0.00e+00 | LXT 5.87e+05 LXS 1.12e-02 | [Sup] Ng_X=1.53e-03 FDM_X=1.75e-05
+it   4000 | loss 1.510e+00 [p=4.75e+08 ng=0.00e+00 fdm=1.51e+00] | PDE 1.01e+01/1.06e+02 | IC 5.51e+05 | BC 8.16e-01/0.00e+00 | LXT 5.87e+05 LXS 1.12e-02 | [Sup] Ng_X=1.39e-03 FDM_X=1.77e-05
+it   6000 | loss 1.504e+00 [p=4.75e+08 ng=0.00e+00 fdm=1.50e+00] | PDE 1.01e+01/2.77e+02 | IC 5.51e+05 | BC 8.16e-01/0.00e+00 | LXT 5.87e+05 LXS 1.12e-02 | [Sup] Ng_X=1.51e-03 FDM_X=1.31e-05
+it   8000 | loss 1.503e+00 [p=4.75e+08 ng=0.00e+00 fdm=1.50e+00] | PDE 1.01e+01/5.47e+02 | IC 5.51e+05 | BC 8.16e-01/0.00e+00 | LXT 5.87e+05 LXS 1.12e-02 | [Sup] Ng_X=1.52e-03 FDM_X=1.25e-05
+
+--- Phase  2a: physics warm-in (phys=0.01) ---
+it      0 | loss 2.463e+06 [p=2.46e+08 ng=0.00e+00 fdm=1.84e+01] | PDE 2.34e+00/4.43e+02 | IC 5.56e+05 | BC 1.19e+00/0.00e+00 | LXT 3.01e+05 LXS 1.23e-02 | [Sup] Ng_X=8.90e-03 FDM_X=1.67e-02
+it   1000 | loss 7.833e+01 [p=2.67e+03 ng=0.00e+00 fdm=5.16e+01] | PDE 6.96e+02/3.21e+00 | IC 5.86e+01 | BC 1.00e+00/6.98e-08 | LXT 1.47e+00 LXS 4.96e-05 | [Sup] Ng_X=6.81e-02 FDM_X=5.01e-02
+it   2000 | loss 6.995e+01 [p=1.85e+03 ng=0.00e+00 fdm=5.14e+01] | PDE 6.06e+02/3.08e+00 | IC 1.98e+01 | BC 1.00e+00/2.03e-08 | LXT 1.04e+00 LXS 2.04e-05 | [Sup] Ng_X=6.79e-02 FDM_X=4.99e-02
+it   3000 | loss 6.709e+01 [p=1.59e+03 ng=0.00e+00 fdm=5.12e+01] | PDE 5.20e+02/2.64e+00 | IC 9.57e+00 | BC 1.00e+00/3.22e-08 | LXT 9.50e-01 LXS 1.25e-05 | [Sup] Ng_X=6.75e-02 FDM_X=4.97e-02
+it   4000 | loss 6.511e+01 [p=1.43e+03 ng=0.00e+00 fdm=5.08e+01] | PDE 4.19e+02/2.16e+00 | IC 5.48e+00 | BC 1.00e+00/7.07e-09 | LXT 9.32e-01 LXS 1.02e-05 | [Sup] Ng_X=6.70e-02 FDM_X=4.93e-02
+it   5000 | loss 6.296e+01 [p=1.28e+03 ng=0.00e+00 fdm=5.01e+01] | PDE 2.79e+02/1.35e+00 | IC 3.62e+00 | BC 1.00e+00/9.37e-11 | LXT 9.44e-01 LXS 1.09e-05 | [Sup] Ng_X=6.61e-02 FDM_X=4.86e-02
+
+--- Phase 2b: полная физика + sup (phys=1) ---
+it      0 | loss 1.334e+03 [p=1.28e+03 ng=0.00e+00 fdm=5.04e+01] | PDE 2.78e+02/1.30e+00 | IC 3.58e+00 | BC 1.00e+00/1.15e-10 | LXT 9.45e-01 LXS 1.10e-05 | [Sup] Ng_X=6.61e-02 FDM_X=4.86e-02
+it   2000 | loss 2.031e+02 [p=2.00e+02 ng=0.00e+00 fdm=3.24e+00] | PDE 1.31e-03/2.48e-02 | IC 1.14e-01 | BC 9.90e-01/0.00e+00 | LXT 8.88e-04 LXS 1.35e-05 | [Sup] Ng_X=5.22e-03 FDM_X=1.54e-03
+it   4000 | loss 3.608e+01 [p=3.35e+01 ng=0.00e+00 fdm=2.57e+00] | PDE 1.80e+00/2.38e-02 | IC 2.65e-02 | BC 1.50e-01/0.00e+00 | LXT 1.75e-03 LXS 5.40e-05 | [Sup] Ng_X=4.38e-03 FDM_X=9.52e-04
+it   6000 | loss 1.610e+01 [p=1.41e+01 ng=0.00e+00 fdm=2.00e+00] | PDE 1.00e+00/2.03e-02 | IC 1.50e-02 | BC 5.70e-02/0.00e+00 | LXT 1.82e-03 LXS 1.58e-04 | [Sup] Ng_X=2.82e-03 FDM_X=3.32e-04
+it   8000 | loss 8.956e+00 [p=7.32e+00 ng=0.00e+00 fdm=1.63e+00] | PDE 5.35e-01/1.25e-02 | IC 1.13e-02 | BC 3.09e-02/0.00e+00 | LXT 4.92e-04 LXS 3.96e-04 | [Sup] Ng_X=1.89e-03 FDM_X=9.24e-05
+it  10000 | loss 1.006e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.64e+00] | PDE 7.65e-13/6.57e-01 | IC 2.57e-01 | BC 1.00e+00/9.06e-16 | LXT 1.00e+00 LXS 6.87e-06 | [Sup] Ng_X=1.55e-03 FDM_X=5.40e-05
+it  12000 | loss 1.002e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.58e+00] | PDE 1.02e-12/1.64e-02 | IC 8.90e-03 | BC 1.00e+00/0.00e+00 | LXT 1.00e+00 LXS 3.25e-05 | [Sup] Ng_X=1.70e-03 FDM_X=6.71e-05
+it  14000 | loss 1.002e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.53e+00] | PDE 1.30e-12/8.24e-03 | IC 7.27e-03 | BC 1.00e+00/0.00e+00 | LXT 1.00e+00 LXS 4.28e-05 | [Sup] Ng_X=1.58e-03 FDM_X=3.11e-05
+it  16000 | loss 1.002e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.53e+00] | PDE 2.20e-12/7.25e-03 | IC 5.98e-03 | BC 1.00e+00/3.21e-17 | LXT 1.00e+00 LXS 5.02e-05 | [Sup] Ng_X=1.55e-03 FDM_X=2.65e-05
+it  18000 | loss 1.002e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.53e+00] | PDE 7.22e-12/6.38e-03 | IC 7.24e-03 | BC 1.00e+00/6.70e-16 | LXT 1.00e+00 LXS 4.93e-05 | [Sup] Ng_X=1.58e-03 FDM_X=3.24e-05
+it  20000 | loss 1.002e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.53e+00] | PDE 0.00e+00/1.08e-02 | IC 5.31e-03 | BC 1.00e+00/5.82e-15 | LXT 1.00e+00 LXS 5.03e-05 | [Sup] Ng_X=1.58e-03 FDM_X=2.96e-05
+
+--- Phase 3: fine-tune lr=1e-4 ---
+it      0 | loss 1.002e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.53e+00] | PDE 0.00e+00/1.08e-02 | IC 5.31e-03 | BC 1.00e+00/5.73e-15 | LXT 1.00e+00 LXS 5.03e-05 | [Sup] Ng_X=1.58e-03 FDM_X=2.96e-05
+it   2000 | loss 1.002e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.52e+00] | PDE 0.00e+00/5.13e-03 | IC 4.39e-03 | BC 1.00e+00/1.21e-13 | LXT 1.00e+00 LXS 6.36e-05 | [Sup] Ng_X=1.55e-03 FDM_X=2.08e-05
+it   4000 | loss 1.002e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.51e+00] | PDE 0.00e+00/3.32e-03 | IC 3.25e-03 | BC 1.00e+00/2.68e-12 | LXT 1.00e+00 LXS 6.37e-05 | [Sup] Ng_X=1.54e-03 FDM_X=1.67e-05
+it   6000 | loss 1.002e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.51e+00] | PDE 0.00e+00/2.71e-03 | IC 2.73e-03 | BC 1.00e+00/6.73e-12 | LXT 1.00e+00 LXS 6.17e-05 | [Sup] Ng_X=1.54e-03 FDM_X=1.59e-05
+it   8000 | loss 1.002e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.51e+00] | PDE 0.00e+00/2.62e-03 | IC 2.55e-03 | BC 1.00e+00/7.05e-12 | LXT 1.00e+00 LXS 5.93e-05 | [Sup] Ng_X=1.54e-03 FDM_X=1.57e-05
+it  10000 | loss 1.002e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.51e+00] | PDE 0.00e+00/2.39e-03 | IC 2.27e-03 | BC 1.00e+00/9.74e-12 | LXT 1.00e+00 LXS 5.84e-05 | [Sup] Ng_X=1.53e-03 FDM_X=1.54e-05
+it  12000 | loss 1.002e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.51e+00] | PDE 0.00e+00/2.21e-03 | IC 2.00e-03 | BC 1.00e+00/6.61e-12 | LXT 1.00e+00 LXS 5.69e-05 | [Sup] Ng_X=1.52e-03 FDM_X=1.51e-05
+it  14000 | loss 1.002e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.51e+00] | PDE 0.00e+00/1.99e-03 | IC 1.80e-03 | BC 1.00e+00/7.21e-12 | LXT 1.00e+00 LXS 5.41e-05 | [Sup] Ng_X=1.53e-03 FDM_X=1.46e-05
+
+--- Phase 4: polish lr=5e-5 ---
+it      0 | loss 1.015e+02 [p=1.00e+03 ng=0.00e+00 fdm=1.51e+00] | PDE 0.00e+00/1.84e-03 | IC 1.63e-03 | BC 1.00e+00/7.91e-12 | LXT 1.00e+00 LXS 5.35e-05 | [Sup] Ng_X=1.52e-03 FDM_X=1.44e-05
+it   2000 | loss 1.015e+02 [p=1.00e+03 ng=0.00e+00 fdm=1.51e+00] | PDE 0.00e+00/3.80e-03 | IC 1.77e-03 | BC 1.00e+00/1.19e-11 | LXT 1.00e+00 LXS 5.30e-05 | [Sup] Ng_X=1.52e-03 FDM_X=1.29e-05
+it   4000 | loss 1.015e+02 [p=1.00e+03 ng=0.00e+00 fdm=1.50e+00] | PDE 0.00e+00/3.17e-03 | IC 1.77e-03 | BC 1.00e+00/3.20e-11 | LXT 1.00e+00 LXS 5.47e-05 | [Sup] Ng_X=1.52e-03 FDM_X=1.26e-05
+it   6000 | loss 1.015e+02 [p=1.00e+03 ng=0.00e+00 fdm=1.50e+00] | PDE 0.00e+00/2.14e-03 | IC 1.66e-03 | BC 1.00e+00/3.70e-11 | LXT 1.00e+00 LXS 5.66e-05 | [Sup] Ng_X=1.52e-03 FDM_X=1.24e-05
+it   8000 | loss 1.015e+02 [p=1.00e+03 ng=0.00e+00 fdm=1.50e+00] | PDE 0.00e+00/1.63e-03 | IC 1.50e-03 | BC 1.00e+00/3.69e-11 | LXT 1.00e+00 LXS 5.80e-05 | [Sup] Ng_X=1.51e-03 FDM_X=1.23e-05
+
+--- Phase 5: restore physics lr=2e-5 ---
+it      0 | loss 1.002e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.50e+00] | PDE 0.00e+00/1.74e-03 | IC 1.75e-03 | BC 1.00e+00/3.68e-11 | LXT 1.00e+00 LXS 5.82e-05 | [Sup] Ng_X=1.53e-03 FDM_X=1.23e-05
+it   1000 | loss 1.002e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.50e+00] | PDE 0.00e+00/1.35e-03 | IC 1.51e-03 | BC 1.00e+00/3.82e-11 | LXT 1.00e+00 LXS 5.71e-05 | [Sup] Ng_X=1.52e-03 FDM_X=1.24e-05
+it   2000 | loss 1.002e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.50e+00] | PDE 0.00e+00/1.24e-03 | IC 1.49e-03 | BC 1.00e+00/3.76e-11 | LXT 1.00e+00 LXS 5.68e-05 | [Sup] Ng_X=1.52e-03 FDM_X=1.24e-05
+it   3000 | loss 1.002e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.50e+00] | PDE 0.00e+00/1.16e-03 | IC 1.47e-03 | BC 1.00e+00/3.67e-11 | LXT 1.00e+00 LXS 5.62e-05 | [Sup] Ng_X=1.52e-03 FDM_X=1.24e-05
+it   4000 | loss 1.002e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.50e+00] | PDE 0.00e+00/1.09e-03 | IC 1.44e-03 | BC 1.00e+00/3.53e-11 | LXT 1.00e+00 LXS 5.56e-05 | [Sup] Ng_X=1.52e-03 FDM_X=1.24e-05
+it   5000 | loss 1.002e+03 [p=1.00e+03 ng=0.00e+00 fdm=1.50e+00] | PDE 0.00e+00/1.04e-03 | IC 1.41e-03 | BC 1.00e+00/3.36e-11 | LXT 1.00e+00 LXS 5.49e-05 | [Sup] Ng_X=1.52e-03 FDM_X=1.24e-05
+
+  Learning time: 84.1 min
+
+  ── Metrics (FDM) ──────────────────
+  FDM  X(t_max) = 23.8013 μm
+  PINN X(t_max) = 23.8295 μm
+  Final error: 0.12%
+  L2 error X(t): 1.51%
+
+  ── (Ngwenya) ────────
+  Ngwenya X(t_max) = 27.7262 μm
+  [save] PINN results: results\pinn_v2_Ti64_500kWcm2.npz
+         X(t_max) = 23.8295 μm
+  PINN vs Ngwenya:  14.1%
+  Graph: plots\pinn_v2_Ti64_500kW_fdm_comparison.png
+
+===========================================================================
+Results — Ti-6Al-4V | PINN vs FDM vs Ngwenya
+===========================================================================
+I (kW/cm²)        FDM X (μm)    PINN X (μm)   Δfinal %     L2 %
+-----------------------------------------------------------------
+500                   23.801         23.829       0.12     1.51
+
+---------------------------------------------------------------------------
+
+=================================================================
+  PINN — Ti-6Al-4V  |  I = 5000 kW/cm²
+  AI_eff = 2.165e+13 W/m²
+=================================================================
+  FDM loaded: X_final = 29.844 μm
+
+  ── FDM vs Ngwenya ──────────────────────────
+  FDM X(t_max)     = 29.844 μm
+  Ngwenya X(t_max) = 33.410 μm
+  Ngwenya overestimates by 11.9%
+
+  FDM sup: X_pts=3000, Ts_pts=503
+  [Stefan1D2P] AI_eff=2.165e+13 W/m²
+  [Stefan1D2P] X_max_est=29.84 μm  (from FDM if provided)
+  [Stefan1D2P] X_scale=89.53 μm
+  [Stefan1D2P] dT_l=26738066 K  t_melt=0.0 ns
+  [Stefan1D2P] w_fdm_X=1000.0  w_fdm_Ts=80.0
+  [Stefan1D2P] Ngwenya weights: X=0.0, Ts=0.0, Tl=0.0
+2026-06-15 12:55:18.950351: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX AVX2
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-06-15 12:55:20.324722: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1616] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 1767 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 3050 Laptop GPU, pci bus id: 0000:01:00.0, compute capability: 8.6
+2026-06-15 12:55:20.378594: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:354] MLIR V1 optimization pass is not enabled
+
+--- Phase 1: supervision warm-up (phys=0) ---
+2026-06-15 12:55:22.100393: I tensorflow/stream_executor/cuda/cuda_blas.cc:1614] TensorFloat-32 will be used for the matrix multiplication. This will only be logged once.
+it      0 | loss 2.643e+01 [p=7.36e+10 ng=0.00e+00 fdm=2.64e+01] | PDE 2.51e+01/1.62e-02 | IC 9.68e+07 | BC 8.16e-01/2.06e-01 | LXT 9.08e+07 LXS 1.15e-02 | [Sup] Ng_X=9.94e-04 FDM_X=1.77e-03
+it   2000 | loss 6.167e+00 [p=7.47e+10 ng=0.00e+00 fdm=6.17e+00] | PDE 2.51e+01/6.06e+00 | IC 9.68e+07 | BC 8.16e-01/0.00e+00 | LXT 9.22e+07 LXS 1.16e-02 | [Sup] Ng_X=8.20e-04 FDM_X=2.65e-05
+it   4000 | loss 6.068e+00 [p=7.47e+10 ng=0.00e+00 fdm=6.07e+00] | PDE 2.51e+01/1.08e+02 | IC 9.68e+07 | BC 8.16e-01/0.00e+00 | LXT 9.22e+07 LXS 1.16e-02 | [Sup] Ng_X=8.20e-04 FDM_X=2.27e-05
+it   6000 | loss 6.066e+00 [p=7.47e+10 ng=0.00e+00 fdm=6.07e+00] | PDE 2.51e+01/3.91e+02 | IC 9.68e+07 | BC 8.16e-01/0.00e+00 | LXT 9.22e+07 LXS 1.16e-02 | [Sup] Ng_X=8.15e-04 FDM_X=2.16e-05
+it   8000 | loss 6.065e+00 [p=7.47e+10 ng=0.00e+00 fdm=6.06e+00] | PDE 2.51e+01/6.42e+02 | IC 9.68e+07 | BC 8.16e-01/0.00e+00 | LXT 9.22e+07 LXS 1.16e-02 | [Sup] Ng_X=8.09e-04 FDM_X=2.11e-05
+
+--- Phase  2a: physics warm-in (phys=0.01) ---
+it      0 | loss 3.898e+08 [p=3.90e+10 ng=0.00e+00 fdm=2.42e+01] | PDE 5.66e+00/5.01e+02 | IC 7.74e+07 | BC 1.18e+00/0.00e+00 | LXT 4.78e+07 LXS 1.15e-02 | [Sup] Ng_X=1.17e-02 FDM_X=1.80e-02
+it   1000 | loss 7.465e+02 [p=6.89e+04 ng=0.00e+00 fdm=5.71e+01] | PDE 1.47e+03/3.97e+00 | IC 3.14e+03 | BC 1.00e+00/9.21e-05 | LXT 4.48e+01 LXS 1.80e-05 | [Sup] Ng_X=6.39e-02 FDM_X=5.11e-02
+it   2000 | loss 5.150e+02 [p=4.58e+04 ng=0.00e+00 fdm=5.71e+01] | PDE 1.44e+03/2.42e+00 | IC 2.21e+03 | BC 1.00e+00/3.00e-07 | LXT 2.75e+01 LXS 1.14e-05 | [Sup] Ng_X=6.39e-02 FDM_X=5.11e-02
+it   3000 | loss 3.515e+02 [p=2.94e+04 ng=0.00e+00 fdm=5.71e+01] | PDE 1.42e+03/2.16e+00 | IC 1.39e+03 | BC 1.00e+00/7.68e-08 | LXT 1.74e+01 LXS 7.39e-06 | [Sup] Ng_X=6.39e-02 FDM_X=5.11e-02
+it   4000 | loss 2.436e+02 [p=1.86e+04 ng=0.00e+00 fdm=5.71e+01] | PDE 1.40e+03/1.90e+00 | IC 8.44e+02 | BC 1.00e+00/1.66e-08 | LXT 1.07e+01 LXS 4.68e-06 | [Sup] Ng_X=6.39e-02 FDM_X=5.11e-02
+it   5000 | loss 1.761e+02 [p=1.19e+04 ng=0.00e+00 fdm=5.71e+01] | PDE 1.38e+03/1.49e+00 | IC 5.04e+02 | BC 1.00e+00/3.43e-09 | LXT 6.59e+00 LXS 2.92e-06 | [Sup] Ng_X=6.39e-02 FDM_X=5.11e-02
+
+--- Phase 2b: полная физика + sup (phys=1) ---
+it      0 | loss 1.191e+04 [p=1.18e+04 ng=0.00e+00 fdm=5.77e+01] | PDE 1.38e+03/1.37e+00 | IC 5.01e+02 | BC 1.00e+00/6.01e-09 | LXT 6.56e+00 LXS 2.91e-06 | [Sup] Ng_X=6.39e-02 FDM_X=5.11e-02
+it   2000 | loss 1.218e+03 [p=1.16e+03 ng=0.00e+00 fdm=5.71e+01] | PDE 1.16e+02/7.44e-02 | IC 5.07e+00 | BC 1.00e+00/1.13e-10 | LXT 9.77e-01 LXS 3.71e-07 | [Sup] Ng_X=6.38e-02 FDM_X=5.10e-02
+it   4000 | loss 1.073e+03 [p=1.02e+03 ng=0.00e+00 fdm=5.70e+01] | PDE 9.29e+00/2.09e-02 | IC 5.06e-01 | BC 1.00e+00/2.57e-13 | LXT 9.86e-01 LXS 4.30e-07 | [Sup] Ng_X=6.38e-02 FDM_X=5.10e-02
+it   6000 | loss 1.044e+03 [p=9.88e+02 ng=0.00e+00 fdm=5.69e+01] | PDE 1.06e+01/1.21e-02 | IC 5.24e-02 | BC 1.00e+00/2.43e-12 | LXT 9.55e-01 LXS 4.18e-07 | [Sup] Ng_X=6.36e-02 FDM_X=5.08e-02
+it   8000 | loss 9.334e+02 [p=8.77e+02 ng=0.00e+00 fdm=5.63e+01] | PDE 5.71e-02/1.82e-02 | IC 3.89e-01 | BC 1.00e+00/4.56e-12 | LXT 8.28e-01 LXS 4.28e-07 | [Sup] Ng_X=6.30e-02 FDM_X=5.03e-02
+it  10000 | loss 2.577e+02 [p=2.03e+02 ng=0.00e+00 fdm=5.50e+01] | PDE 2.51e-07/1.65e-04 | IC 2.05e-01 | BC 1.00e+00/1.56e-12 | LXT 7.54e-04 LXS 1.41e-07 | [Sup] Ng_X=6.17e-02 FDM_X=4.90e-02
+it  12000 | loss 2.081e+02 [p=2.02e+02 ng=0.00e+00 fdm=6.61e+00] | PDE 2.41e-05/3.47e-03 | IC 1.42e-01 | BC 9.99e-01/5.47e-11 | LXT 2.62e-04 LXS 6.30e-07 | [Sup] Ng_X=2.21e-03 FDM_X=5.28e-04
+it  14000 | loss 2.075e+02 [p=2.01e+02 ng=0.00e+00 fdm=6.42e+00] | PDE 3.34e-04/4.76e-03 | IC 9.52e-02 | BC 9.96e-01/3.15e-12 | LXT 1.04e-03 LXS 5.16e-07 | [Sup] Ng_X=1.67e-03 FDM_X=2.43e-04
+it  16000 | loss 5.010e+01 [p=4.27e+01 ng=0.00e+00 fdm=7.37e+00] | PDE 2.46e+00/1.92e-02 | IC 2.35e-02 | BC 1.94e-01/1.09e-09 | LXT 1.46e-03 LXS 1.07e-06 | [Sup] Ng_X=3.48e-03 FDM_X=1.12e-03
+it  18000 | loss 2.911e+01 [p=2.24e+01 ng=0.00e+00 fdm=6.67e+00] | PDE 2.12e+00/1.07e-02 | IC 1.56e-02 | BC 8.79e-02/1.95e-10 | LXT 3.16e-03 LXS 3.25e-06 | [Sup] Ng_X=2.14e-03 FDM_X=4.54e-04
+it  20000 | loss 2.241e+01 [p=1.62e+01 ng=0.00e+00 fdm=6.26e+00] | PDE 1.53e+00/1.44e-02 | IC 1.13e-02 | BC 4.94e-02/1.41e-11 | LXT 5.71e-03 LXS 1.05e-05 | [Sup] Ng_X=1.22e-03 FDM_X=1.20e-04
+
+--- Phase 3: fine-tune lr=1e-4 ---
+it      0 | loss 1.915e+01 [p=1.29e+01 ng=0.00e+00 fdm=6.26e+00] | PDE 1.48e+00/1.43e-02 | IC 1.09e-02 | BC 4.92e-02/1.41e-11 | LXT 1.74e-03 LXS 9.82e-06 | [Sup] Ng_X=1.19e-03 FDM_X=1.18e-04
+it   2000 | loss 1.611e+01 [p=9.91e+00 ng=0.00e+00 fdm=6.20e+00] | PDE 1.08e+00/8.24e-03 | IC 9.47e-03 | BC 4.24e-02/2.50e-12 | LXT 2.40e-04 LXS 1.40e-05 | [Sup] Ng_X=1.07e-03 FDM_X=1.02e-04
+it   4000 | loss 1.348e+01 [p=7.33e+00 ng=0.00e+00 fdm=6.15e+00] | PDE 5.90e-01/8.97e-03 | IC 8.11e-03 | BC 3.19e-02/8.34e-13 | LXT 2.71e-04 LXS 3.32e-05 | [Sup] Ng_X=9.14e-04 FDM_X=8.18e-05
+it   6000 | loss 1.166e+01 [p=5.54e+00 ng=0.00e+00 fdm=6.12e+00] | PDE 3.81e-01/6.51e-03 | IC 6.42e-03 | BC 2.41e-02/6.05e-13 | LXT 2.57e-04 LXS 7.96e-05 | [Sup] Ng_X=8.43e-04 FDM_X=7.01e-05
+it   8000 | loss 1.039e+01 [p=4.27e+00 ng=0.00e+00 fdm=6.11e+00] | PDE 3.37e-01/4.59e-03 | IC 5.70e-03 | BC 1.84e-02/8.73e-13 | LXT 1.68e-04 LXS 1.99e-04 | [Sup] Ng_X=8.36e-04 FDM_X=6.41e-05
+it  10000 | loss 9.589e+00 [p=3.48e+00 ng=0.00e+00 fdm=6.11e+00] | PDE 3.03e-01/3.50e-03 | IC 4.99e-03 | BC 1.48e-02/1.79e-12 | LXT 1.00e-04 LXS 3.91e-04 | [Sup] Ng_X=8.35e-04 FDM_X=6.11e-05
+it  12000 | loss 9.079e+00 [p=2.97e+00 ng=0.00e+00 fdm=6.11e+00] | PDE 2.80e-01/3.18e-03 | IC 4.50e-03 | BC 1.24e-02/3.40e-12 | LXT 8.60e-05 LXS 6.80e-04 | [Sup] Ng_X=8.27e-04 FDM_X=5.90e-05
+it  14000 | loss 8.957e+00 [p=2.85e+00 ng=0.00e+00 fdm=6.10e+00] | PDE 2.58e-01/2.87e-03 | IC 3.95e-03 | BC 1.10e-02/6.25e-12 | LXT 2.93e-04 LXS 9.72e-04 | [Sup] Ng_X=8.10e-04 FDM_X=5.78e-05
+
+--- Phase 4: polish lr=5e-5 ---
+it      0 | loss 6.383e+00 [p=2.81e+00 ng=0.00e+00 fdm=6.10e+00] | PDE 2.54e-01/2.83e-03 | IC 3.90e-03 | BC 1.04e-02/8.16e-12 | LXT 3.73e-04 LXS 1.14e-03 | [Sup] Ng_X=8.31e-04 FDM_X=5.56e-05
+it   2000 | loss 6.354e+00 [p=2.54e+00 ng=0.00e+00 fdm=6.10e+00] | PDE 2.66e-01/3.31e-03 | IC 3.93e-03 | BC 1.02e-02/6.65e-12 | LXT 6.98e-05 LXS 1.20e-03 | [Sup] Ng_X=8.42e-04 FDM_X=5.40e-05
+it   4000 | loss 6.346e+00 [p=2.50e+00 ng=0.00e+00 fdm=6.10e+00] | PDE 2.71e-01/3.69e-03 | IC 3.84e-03 | BC 9.95e-03/5.67e-12 | LXT 6.51e-05 LXS 1.27e-03 | [Sup] Ng_X=8.49e-04 FDM_X=5.13e-05
+it   6000 | loss 6.334e+00 [p=2.43e+00 ng=0.00e+00 fdm=6.09e+00] | PDE 2.75e-01/3.78e-03 | IC 3.69e-03 | BC 9.52e-03/7.44e-13 | LXT 6.23e-05 LXS 1.41e-03 | [Sup] Ng_X=8.52e-04 FDM_X=4.68e-05
+it   8000 | loss 6.322e+00 [p=2.35e+00 ng=0.00e+00 fdm=6.09e+00] | PDE 2.69e-01/3.37e-03 | IC 3.36e-03 | BC 9.07e-03/1.26e-12 | LXT 7.25e-05 LXS 1.57e-03 | [Sup] Ng_X=8.53e-04 FDM_X=4.31e-05
+
+--- Phase 5: restore physics lr=2e-5 ---
+it      0 | loss 1.249e+01 [p=6.40e+00 ng=0.00e+00 fdm=6.09e+00] | PDE 2.85e-01/3.51e-03 | IC 3.64e-03 | BC 9.17e-03/1.25e-12 | LXT 5.07e-03 LXS 1.70e-03 | [Sup] Ng_X=9.08e-04 FDM_X=4.37e-05
+it   1000 | loss 8.400e+00 [p=2.31e+00 ng=0.00e+00 fdm=6.09e+00] | PDE 2.60e-01/2.78e-03 | IC 3.34e-03 | BC 9.05e-03/1.26e-12 | LXT 3.80e-05 LXS 1.59e-03 | [Sup] Ng_X=8.59e-04 FDM_X=4.35e-05
+it   2000 | loss 8.383e+00 [p=2.30e+00 ng=0.00e+00 fdm=6.09e+00] | PDE 2.54e-01/2.64e-03 | IC 3.29e-03 | BC 8.99e-03/1.35e-12 | LXT 3.75e-05 LXS 1.61e-03 | [Sup] Ng_X=8.53e-04 FDM_X=4.38e-05
+it   3000 | loss 8.361e+00 [p=2.27e+00 ng=0.00e+00 fdm=6.09e+00] | PDE 2.48e-01/2.53e-03 | IC 3.26e-03 | BC 8.90e-03/1.54e-12 | LXT 3.63e-05 LXS 1.66e-03 | [Sup] Ng_X=8.52e-04 FDM_X=4.41e-05
+it   4000 | loss 8.344e+00 [p=2.26e+00 ng=0.00e+00 fdm=6.09e+00] | PDE 2.40e-01/2.37e-03 | IC 3.17e-03 | BC 8.80e-03/1.94e-12 | LXT 4.76e-05 LXS 1.70e-03 | [Sup] Ng_X=8.49e-04 FDM_X=4.44e-05
+it   5000 | loss 8.386e+00 [p=2.30e+00 ng=0.00e+00 fdm=6.09e+00] | PDE 2.39e-01/2.24e-03 | IC 3.20e-03 | BC 8.60e-03/2.69e-12 | LXT 1.38e-04 LXS 1.81e-03 | [Sup] Ng_X=8.58e-04 FDM_X=4.45e-05
+
+  Learning time: 85.0 min
+
+  ── Metrics (FDM) ──────────────────
+  FDM  X(t_max) = 29.8440 μm
+  PINN X(t_max) = 29.8542 μm
+  Final error: 0.03%
+  L2 error X(t): 2.88%
+
+  ── (Ngwenya) ────────
+  Ngwenya X(t_max) = 33.4102 μm
+  [save] PINN results: results\pinn_v2_Ti64_5000kWcm2.npz
+         X(t_max) = 29.8542 μm
+  PINN vs Ngwenya:  10.6%
+  Graph: plots\pinn_v2_Ti64_5000kW_fdm_comparison.png
+
+===========================================================================
+Results — Ti-6Al-4V | PINN vs FDM vs Ngwenya
+===========================================================================
+I (kW/cm²)        FDM X (μm)    PINN X (μm)   Δfinal %     L2 %
+-----------------------------------------------------------------
+5000                  29.844         29.854       0.03     2.88
