@@ -170,45 +170,45 @@ Analytical solution by (Ngwenya and Kahlen (2012)).
 PINN (I = 5kW, 50kW, 500kW, 5MW)
 
 <p align="center">
-  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser/Ti-6AI-4V/figures/PINN%2Bsupervision/analytical_vs_PINN_I_5kW.png" width="45%" />
-  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser/Ti-6AI-4V/figures/PINN%2Bsupervision/temp_field-pinn_pred_I_5kW.png" width="50%" />
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser_beta/Ti-6AI-4V/figures/PINN%2Bsupervision/analytical_vs_PINN_I_5kW.png" width="45%" />
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser_beta/Ti-6AI-4V/figures/PINN%2Bsupervision/temp_field-pinn_pred_I_5kW.png" width="50%" />
 </p>
 
 <p align="center">
-  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser/Ti-6AI-4V/figures/PINN%2Bsupervision/analytical_vs_PINN_I_50kW.png" width="45%" />
-  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser/Ti-6AI-4V/figures/PINN%2Bsupervision/temp_field-pinn_pred_I_50kW.png" width="50%" />
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser_beta/Ti-6AI-4V/figures/PINN%2Bsupervision/analytical_vs_PINN_I_50kW.png" width="45%" />
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser_beta/Ti-6AI-4V/figures/PINN%2Bsupervision/temp_field-pinn_pred_I_50kW.png" width="50%" />
 </p>
 
 <p align="center">
-  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser/Ti-6AI-4V/figures/PINN%2Bsupervision/analytical_vs_PINN_I_500kW.png" width="45%" />
-  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser/Ti-6AI-4V/figures/PINN%2Bsupervision/temp_field-pinn_pred_I_500kW.png" width="50%" />
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser_beta/Ti-6AI-4V/figures/PINN%2Bsupervision/analytical_vs_PINN_I_500kW.png" width="45%" />
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser_beta/Ti-6AI-4V/figures/PINN%2Bsupervision/temp_field-pinn_pred_I_500kW.png" width="50%" />
 </p>
 
 <p align="center">
-  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser/Ti-6AI-4V/figures/PINN%2Bsupervision/analytical_vs_PINN_I_5MW.png" width="45%" />
-  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser/Ti-6AI-4V/figures/PINN%2Bsupervision/temp_field-pinn_pred_I_5MW.png" width="50%" />
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser_beta/Ti-6AI-4V/figures/PINN%2Bsupervision/analytical_vs_PINN_I_5MW.png" width="45%" />
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/main/Stefan_1D_2P_laser_beta/Ti-6AI-4V/figures/PINN%2Bsupervision/temp_field-pinn_pred_I_5MW.png" width="50%" />
 </p>
 
 ### Silver, Aluminium, Copper and Titanium
 
 Analytical solution:
 
-![](https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/dev/Stefan_1D_2P_laser/Al_Ag_Cu_Ti/figures/analytical_solution_Al_Ag_Cu_Ti.jpg)
+![](https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/dev/Stefan_1D_2P_laser_beta/Al_Ag_Cu_Ti/figures/analytical_solution_Al_Ag_Cu_Ti.jpg)
 
 PINN (Ag, Al, Cu, Ti)
 
 <p align="center">
-  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/dev/Stefan_1D_2P_laser/Al_Ag_Cu_Ti/figures/melt_depth_Ag_PINN_full.png" />
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/dev/Stefan_1D_2P_laser_beta/Al_Ag_Cu_Ti/figures/melt_depth_Ag_PINN_full.png" />
 </p>
 
 <p align="center">
-  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/dev/Stefan_1D_2P_laser/Al_Ag_Cu_Ti/figures/melt_depth_Al_PINN_full.png" />
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/dev/Stefan_1D_2P_laser_beta/Al_Ag_Cu_Ti/figures/melt_depth_Al_PINN_full.png" />
 </p>
 
 <p align="center">
-  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/dev/Stefan_1D_2P_laser/Al_Ag_Cu_Ti/figures/melt_depth_Cu_PINN_full.png" />
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/dev/Stefan_1D_2P_laser_beta/Al_Ag_Cu_Ti/figures/melt_depth_Cu_PINN_full.png" />
 </p>
 
 <p align="center">
-  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/dev/Stefan_1D_2P_laser/Al_Ag_Cu_Ti/figures/melt_depth_Ti_PINN_full.png" />
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/dev/Stefan_1D_2P_laser_beta/Al_Ag_Cu_Ti/figures/melt_depth_Ti_PINN_full.png" />
 </p>

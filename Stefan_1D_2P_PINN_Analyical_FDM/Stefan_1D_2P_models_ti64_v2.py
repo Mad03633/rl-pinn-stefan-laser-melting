@@ -1,15 +1,5 @@
-# ============================================================
-# Stefan_1D_2P_models_ti64_v2.py
-# PINN для Ti-6Al-4V — v2
-# t = 0…7 мкс, I = 5 / 50 / 500 / 5000 кВт/см²
-#
-# ИЗМЕНЕНИЯ vs v1 (Stefan_1D_2P_models_tf.py):
-#   - Главный эталон: FDM (загружается из results/)
-#   - Ngwenya analytical solution is kept only as a reference curve, not as training supervision
-#   - Метрика: L2 vs FDM (не только vs Ngwenya)
-#   - Нормализация жидкой зоны: z_liq_max = X_scale (как в metals_v2)
-#   - Добавлена метрика сравнения FDM vs Ngwenya
-# ============================================================
+# PINN for Ti-6Al-4V
+# t = 0…7 μs, I = 5 / 50 / 500 / 5000 kW/cm²
 
 import numpy as np
 import tensorflow.compat.v1 as tf
@@ -77,9 +67,7 @@ def fdm_vs_ngwenya_report(fdm_ref, X_ngwenya, t_max):
     print(f"  Ngwenya overestimates by {diff:.1f}%")
 
 
-# ─────────────────────────────────────────────────────────
-#  Сети
-# ─────────────────────────────────────────────────────────
+#  Networks
 
 def xavier_init(in_dim, out_dim):
     stddev = np.sqrt(2.0 / (in_dim + out_dim))
@@ -134,9 +122,6 @@ class Stefan1D2P_v2:
         self.z_min = float(z_min); self.z_max_f = float(z_max)
         self.t_min = float(t_min); self.t_max_f = float(t_max)
 
-        # FDM is the main numerical reference, therefore the scaling is based on FDM,
-        # not on Ngwenya. This is important at low intensities where Ngwenya may
-        # significantly overestimate the melt depth.
         if fdm_X_max is not None:
             X_max_est = float(fdm_X_max)
         elif X_max_hint is not None:
@@ -185,7 +170,7 @@ class Stefan1D2P_v2:
         self.X_min   = C(float(X_min_m))
         self.t_melt  = C(t_melt_val)
         self.z_max   = C(float(z_max))
-        # Нормализация жидкой зоны по X_scale (не z_max)
+        # Normalization of the liquid zone by X_scale (not z_max)
         self.z_liq_max = C(float(X_scale))
         self.delta   = C(max(0.01 * float(X_scale), 1e-9))
         self.pde_l   = C(pde_l_val); self.pde_s = C(pde_s_val)
@@ -195,7 +180,7 @@ class Stefan1D2P_v2:
                       float(rho) * float(Lh) * float(X_scale) / float(t_max))
         self.q_scale = C(q0); self.s_scale = C(s_scale)
 
-        # Веса
+        # Weights
         self.w_r    = C(w_r);    self.w_T0   = C(w_T0)
         self.w_bc   = C(w_bc);   self.w_far  = C(w_far)
         self.w_xt   = C(w_xt);   self.w_xs   = C(w_xs)
@@ -210,7 +195,7 @@ class Stefan1D2P_v2:
         self.net_Ts = FCNN(list(layers_T))
         self.net_X  = FCNN(list(layers_X))
 
-        # Физика
+        # Physics
         self.z_rl  = tf.placeholder(tf.float32, [None, 1], 'z_rl')
         self.t_rl  = tf.placeholder(tf.float32, [None, 1], 't_rl')
         self.z_rs  = tf.placeholder(tf.float32, [None, 1], 'z_rs')
@@ -227,7 +212,7 @@ class Stefan1D2P_v2:
         self.z_sup_Tl = tf.placeholder(tf.float32, [None, 1], 'z_sup_Tl')
         self.t_sup_Tl = tf.placeholder(tf.float32, [None, 1], 't_sup_Tl')
         self.Tl_sup   = tf.placeholder(tf.float32, [None, 1], 'Tl_sup')
-        # FDM supervision (новые)
+        # FDM supervision
         self.t_fdm_X  = tf.placeholder(tf.float32, [None, 1], 't_fdm_X')
         self.X_fdm    = tf.placeholder(tf.float32, [None, 1], 'X_fdm')
         self.z_fdm_Ts = tf.placeholder(tf.float32, [None, 1], 'z_fdm_Ts')
@@ -244,18 +229,17 @@ class Stefan1D2P_v2:
         self.sess = tf.Session(config=cfg)
         self.sess.run(tf.global_variables_initializer())
 
-    # ── Нормализация ──────────────────────────────────────
+    # Normalization
     def _norm_z(self, z):
         return 2.0 * (z - self.z_min) / (self.z_max - self.z_min) - 1.0
 
     def _norm_z_liq(self, z):
-        """Жидкая зона нормализуется по X_scale"""
         return 2.0 * z / self.z_liq_max - 1.0
 
     def _norm_t(self, t):
         return 2.0 * (t - self.t_min) / (self.t_max_f - self.t_min) - 1.0
 
-    # ── Поля ─────────────────────────────────────────────
+
     def X(self, t):
         eps    = tf.constant(1e-12, dtype=tf.float32)
         t_span = tf.constant(self.t_max_f - self.t_melt_f, dtype=tf.float32)
@@ -353,12 +337,12 @@ class Stefan1D2P_v2:
             (self.Tl(self.z_sup_Tl, self.t_sup_Tl) - self.Tl_sup) / (self.dT_l + eps)
         ))
 
-        # 13. FDM X(t) supervision (новое)
+        # 13. FDM X(t) supervision
         self.L_fdm_X = tf.reduce_mean(tf.square(
             (self.X(self.t_fdm_X) - self.X_fdm) / (self.X_scale + eps)
         ))
 
-        # 14. FDM Ts(z, t_max) supervision (новое)
+        # 14. FDM Ts(z, t_max) supervision
         self.L_fdm_Ts = tf.reduce_mean(tf.square(
             (self.Ts(self.z_fdm_Ts, self.t_fdm_Ts) - self.Ts_fdm) / (self.T_char + eps)
         ))
@@ -445,7 +429,6 @@ class Stefan1D2P_v2:
         return self.sess.run(self.Ts(tf.constant(z_np), tf.constant(t_np)))
 
     def compute_fdm_metrics(self, fdm_ref):
-        """L2-ошибка PINN vs FDM — главная метрика"""
         t_fdm = fdm_ref["t_fdm"].astype(np.float32)
         S_fdm = fdm_ref["S_fdm"]
         X_pinn = self.eval_X(t_fdm).flatten()

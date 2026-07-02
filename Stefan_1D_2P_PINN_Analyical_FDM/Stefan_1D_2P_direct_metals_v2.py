@@ -1,16 +1,14 @@
-# ============================================================
 # Stefan_1D_2P_direct_metals_v2.py
 # PINN for Ag, Al, Cu, Ti — v2
-# Эталон: FDM (results/fdm_explicit_*.npz)
-# Analytical: только for спраinки
+# Reference: FDM (results/fdm_explicit_*.npz)
+# Analytical: only for reference
 #
-# ЗАПУСК:
+# Runner:
 #   python Stefan_1D_2P_direct_metals_v2.py --material Ag
 #   python Stefan_1D_2P_direct_metals_v2.py --material Al
 #   python Stefan_1D_2P_direct_metals_v2.py --material Cu
 #   python Stefan_1D_2P_direct_metals_v2.py --material Ti
 #   python Stefan_1D_2P_direct_metals_v2.py --material all
-# ============================================================
 
 import argparse
 import os
@@ -27,7 +25,6 @@ from Stefan_1D_2P_models_metals_v2 import (
 )
 from save_pinn_results import save_pinn_metal
 
-# ── Параметры материалоin ──────────────────────────────────
 MATERIALS = {
     "Ag": dict(
         rho_s=10500, rho_l=9300, ks=429, kl=361,
@@ -37,7 +34,7 @@ MATERIALS = {
         I_laser=1e9,
         S_scale=0.0903, S_max_hint=0.0695,
         color="#9467bd", linestyle=":",
-        # Веса — скорректироinаны for FDM supervision
+
         w_bc_l=500.0, w_xt=800.0, w_xs=150.0,
         w_sup_S=400.0, w_sup_Ts=50.0,
     ),
@@ -49,7 +46,7 @@ MATERIALS = {
         I_laser=1e9,
         S_scale=0.1041, S_max_hint=0.0801,
         color="#1f77b4", linestyle="--",
-        # Al: уinеличены inеса supervision, снижен w_bc_l
+
         w_bc_l=400.0, w_xt=800.0, w_xs=150.0,
         w_sup_S=600.0, w_sup_Ts=80.0,
     ),
@@ -61,7 +58,7 @@ MATERIALS = {
         I_laser=1e9,
         S_scale=0.0701, S_max_hint=0.054,
         color="#d62728", linestyle="-.",
-        # Cu: усилен Stefan condition weight
+        
         w_bc_l=500.0, w_xt=800.0, w_xs=300.0,
         w_sup_S=400.0, w_sup_Ts=50.0,
     ),
@@ -73,7 +70,7 @@ MATERIALS = {
         I_laser=1e9,
         S_scale=0.0468, S_max_hint=0.036,
         color="#2ca02c", linestyle="-",
-        # Ti: дополнительные BC-points через w_bc_l
+        
         w_bc_l=600.0, w_xt=800.0, w_xs=150.0,
         w_sup_S=500.0, w_sup_Ts=60.0,
     ),
@@ -83,15 +80,7 @@ RESULTS_DIR = "results"
 PLOTS_DIR   = "plots"
 
 
-# ── Аналитическое решение (кinазистационарное, for спраinки) ─
 def analytic_S(t_arr, mat):
-    """
-    СПРАВОЧНОЕ решение — кinазистационарное atближение.
-    Систематически заinышает S from-за:
-      - использоinания alpha_s inместо alpha_l
-      - неограниченного роста Tsurf
-    Глаinный reference: FDM.
-    """
     AI_l    = float(mat["A_l"]) * float(mat["I_laser"])
     ks      = float(mat["ks"])
     alpha_s = float(mat["alpha_s"])
@@ -113,14 +102,9 @@ def analytic_S(t_arr, mat):
     return S
 
 
-# ── Подготоinка обучающих данных ───────────────────────────
 def make_data(mat, z_max, fdm_ref,
               Nr=15000, N0=3000, Nbc=2000, NX=2000,
               N_sup_S=3000, N_sup_T=3000, seed=42):
-    """
-    Формирует слоinарь обучающих данных.
-    Ноinое: добаinляет FDM supervision points.
-    """
     rng    = np.random.RandomState(seed)
     t_melt = float(mat["t_melt"])
     t_max  = float(mat["t_max"])
@@ -133,21 +117,21 @@ def make_data(mat, z_max, fdm_ref,
     Tm      = float(mat["Tm"])
     T0      = float(mat["T0"])
 
-    # Residual points жидкой фазы — z in [0, S_scale*sqrt(tau)]
+    # Residual points liquid phase — z in [0, S_scale*sqrt(tau)]
     t_rl   = rng.uniform(t_eps, t_max, Nr).astype(np.float32)
     tau_rl = (t_rl - t_melt) / (t_max - t_melt)
     z_rl_max = S_scale * np.sqrt(np.clip(tau_rl, 1e-9, None))
     z_rl   = (rng.uniform(0, 1, Nr) * z_rl_max).astype(np.float32)
 
-    # Residual points тinёрдой фазы
+    # Residual points solid phase
     z_rs = rng.uniform(0.0, z_max, (Nr, 1)).astype(np.float32)
     t_rs = rng.uniform(t_eps, t_max, (Nr, 1)).astype(np.float32)
 
-    # BC, интерфейс
+    # BC, interface
     t_bc = rng.uniform(t_eps, t_max, (Nbc, 1)).astype(np.float32)
     t_S  = rng.uniform(t_eps, t_max, (NX,  1)).astype(np.float32)
 
-    # IC: фfromически точный профиль прогреinа
+    # IC
     z_ic  = rng.uniform(0.0, z_max, (N0, 1)).astype(np.float32)
     Ts_ic = preheating_Ts(
         z_ic.flatten(), t_melt, A_s, I, ks, alpha_s, Tm, T0
@@ -168,12 +152,7 @@ def make_data(mat, z_max, fdm_ref,
     )
 
 
-# ── Вычисление PDE-нормалfromации from FDM ───────────────────
 def compute_pde_scales_from_fdm(mat, fdm_ref):
-    """
-    Вычисляет корректные масштабы нормалfromации PDE-потерь
-    from FDM данных, а не from эinристики.
-    """
     t_fdm = fdm_ref["t_fdm"]
     S_fdm = fdm_ref["S_fdm"]
     T_fdm = fdm_ref["T_fdm"]
@@ -185,16 +164,13 @@ def compute_pde_scales_from_fdm(mat, fdm_ref):
     alpha_l = float(mat["alpha_l"])
     alpha_s = float(mat["alpha_s"])
 
-    # Теплоinой поток in жидкой фазе ~ AI_l / kl
-    # Нормалfromуем inременным масштабом t_max - t_melt
+    # Heat flux in liquid phase ~ AI_l / kl
     t_dur = t_max - t_melt
 
-    # Масштаб тinёрдой фазы — прямо from данных
     pde_s_scale = (Tm - T0) / t_dur
 
-    # Масштаб жидкой фазы — from максимальной T in жидкой зоне по FDM
     S_max = S_fdm[-1]
-    # Жидкая зона: T > Tm in финальном профиле
+
     liquid_T = T_fdm[fdm_ref["z_fdm"] <= S_max * 1.05]
     if len(liquid_T) > 0:
         Tl_max = liquid_T.max()
@@ -205,7 +181,6 @@ def compute_pde_scales_from_fdm(mat, fdm_ref):
     return float(pde_l_scale), float(pde_s_scale)
 
 
-# ── Осноinная функция for одного материала ─────────────────
 def run_material(name, verbose=True):
     mat = MATERIALS[name]
 
@@ -214,7 +189,6 @@ def run_material(name, verbose=True):
     print(f"  I = {mat['I_laser']:.0e} W/m²   t_melt = {mat['t_melt']:.4e} s")
     print("=" * 65)
 
-    # Загрузка FDM referenceа
     fdm_path = os.path.join(RESULTS_DIR, f"fdm_explicit_{name}.npz")
     if not os.path.exists(fdm_path):
         raise FileNotFoundError(
@@ -227,16 +201,13 @@ def run_material(name, verbose=True):
 
     z_max = fdm_ref["z_fdm"][-1]
 
-    # PDE нормалfromация from FDM
     pde_l, pde_s = compute_pde_scales_from_fdm(mat, fdm_ref)
     print(f"  PDE scales (from FDM): pde_l={pde_l:.2e}  pde_s={pde_s:.2e}")
 
-    # Данные
     data = make_data(mat, z_max, fdm_ref)
     print(f"  IC Ts: [{data['Ts_ic'].min():.0f}, {data['Ts_ic'].max():.0f}] K")
     print(f"  FDM supervision: S_pts={len(data['t_sup_S'])}, Ts_pts={len(data['z_sup_Ts'])}")
 
-    # Модель
     model = StefanMetalsV2(
         z_max=z_max, t_melt=mat["t_melt"], t_max=mat["t_max"],
         rho_s=mat["rho_s"], rho_l=mat["rho_l"],
@@ -258,7 +229,6 @@ def run_material(name, verbose=True):
 
     t0 = time.time()
 
-    # ── Учебная программа (curriculum) ───────────────────
     # Phase 1: IC + FDM supervision, without physics
     print("\n--- Phase 1: IC + FDM supervision  lr=5e-4  phys=0.0  sup=1.0 ---")
     model.train(data, iters=5000, lr=5e-4, print_every=1000,
@@ -269,8 +239,8 @@ def run_material(name, verbose=True):
     model.train(data, iters=5000, lr=5e-4, print_every=1000,
                 phys_weight=0.01, sup_weight=1.0)
 
-    # Phase 2b: полная physics + supervision
-    print("\n--- Phase 2b: полная physics  lr=5e-4  phys=1.0  sup=1.0 ---")
+    # Phase 2b: full physics + supervision
+    print("\n--- Phase 2b: full physics  lr=5e-4  phys=1.0  sup=1.0 ---")
     model.train(data, iters=20000, lr=5e-4, print_every=2000,
                 phys_weight=1.0, sup_weight=1.0)
 
@@ -287,7 +257,7 @@ def run_material(name, verbose=True):
     elapsed = time.time() - t0
     print(f"\n  Learning time: {elapsed/60:.1f} min")
 
-    # ── Metrics ───────────────────────────────────────────
+
     metrics = model.compute_fdm_metrics(fdm_ref, mat["t_melt"])
     print(f"\n  ── Metrics (reference: FDM) ──────────────────")
     print(f"  FDM  S(t_max) = {metrics['S_fdm_final']*100:.4f} cm")
@@ -296,7 +266,6 @@ def run_material(name, verbose=True):
     print(f"  L2 error S(t): {metrics['err_l2_%']:.2f}%")
     print(f"  Max error S: {metrics['err_max_m']*100:.4f} cm")
 
-    # Analytical for спраinки
     t_melt_plot = np.linspace(mat["t_melt"], mat["t_max"], 500).astype(np.float32)
     S_pinn      = model.eval_S(t_melt_plot).flatten()
     S_anal      = analytic_S(t_melt_plot, mat)
@@ -305,7 +274,6 @@ def run_material(name, verbose=True):
     print(f"  PINN vs analytical: {abs(S_pinn[-1]-S_anal[-1])/S_anal[-1]*100:.1f}%  "
           f"(Not main criterion)")
 
-    # ── Графики ───────────────────────────────────────────
     t_pre = np.linspace(0.0, mat["t_melt"], 50)
 
     fig, axes = plt.subplots(1, 3, figsize=(16, 5))
@@ -314,7 +282,6 @@ def run_material(name, verbose=True):
         fontsize=12
     )
 
-    # График 1: S(t) — сраinнение трёх методоin
     ax = axes[0]
     # FDM
     ax.plot(fdm_ref["t_fdm"], fdm_ref["S_fdm"] * 100,
@@ -337,7 +304,7 @@ def run_material(name, verbose=True):
     ax.set_ylim(bottom=0)
     ax.grid(True, alpha=0.3)
 
-    # График 2: PINN vs FDM error
+    # Graph 2: PINN vs FDM error
     ax2 = axes[1]
     t_fdm_valid = fdm_ref["t_fdm"][fdm_ref["t_fdm"] >= mat["t_melt"]]
     S_fdm_valid = fdm_ref["S_fdm"][fdm_ref["t_fdm"] >= mat["t_melt"]]
@@ -355,7 +322,7 @@ def run_material(name, verbose=True):
     ax2.set_title(f"PINN vs FDM error\nL2={metrics['err_l2_%']:.1f}%", fontsize=10)
     ax2.grid(True, alpha=0.3)
 
-    # График 3: T(z) at t = t_max
+    # Graph 3: T(z) at t = t_max
     ax3 = axes[2]
     S_end = S_pinn[-1]
     z_liq = np.linspace(0, S_end, 80).astype(np.float32)
@@ -365,7 +332,6 @@ def run_material(name, verbose=True):
 
     ax3.plot(z_liq * 100, Tl_end, 'r-', lw=2.0, label='Liquid Tl')
     ax3.plot(z_sol * 100, Ts_end, 'b-', lw=2.0, label='Solid Ts')
-    # FDM температурный профиль
     ax3.plot(fdm_ref["z_fdm"] * 100, fdm_ref["T_fdm"],
              'g--', lw=1.5, alpha=0.7, label='FDM T(z)')
     ax3.axvline(S_end * 100, color='k', ls='--', lw=1.5,
@@ -390,7 +356,6 @@ def run_material(name, verbose=True):
     return metrics, model
 
 
-# ── Итогоinое сраinнение inсех материалоin ───────────────────
 def print_final_summary(all_metrics):
     print("\n" + "=" * 80)
     print("FINAL COMPARISON — PINN vs FDM  (main reference)")
@@ -404,7 +369,6 @@ def print_final_summary(all_metrics):
               f"{m['err_max_m']*1000:>12.4f}")
 
 
-# ── Сраinнительный график inсех материалоin ─────────────────
 def plot_all_materials(all_results):
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     axes = axes.flatten()
@@ -449,7 +413,6 @@ def plot_all_materials(all_results):
     print(f"\nSummary plot: {path}")
 
 
-# ── Entry point ───────────────────────────────────────────
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--material", type=str, default="all",
