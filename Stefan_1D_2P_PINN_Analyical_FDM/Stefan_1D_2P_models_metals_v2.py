@@ -1,16 +1,6 @@
-# ============================================================
-# Stefan_1D_2P_models_metals_v2.py
-# PINN для 1D двухфазной задачи Стефана — лазерное плавление
+# PINN for 1D 2 phase Stefan problem — laser melting
 # Ag, Al, Cu, Ti  |  I = 1e9 W/m²  |  t in [t_melt, 10 s]
-#
-# ИЗМЕНЕНИЯ ОТНОСИТЕЛЬНО v1:
-#   - Главный эталон: FDM (загружается из results/fdm_explicit_*.npz)
-#   - Аналитика оставлена только для справки
-#   - Добавлены supervision потери: L_sup_S, L_sup_Ts
-#   - Нормализация PDE-потерь пересчитана из FDM-данных
-#   - Метрика качества: L2-ошибка vs FDM
-#   - Правильный масштаб: используется z_liq_max = S_scale для net_Tl
-# ============================================================
+
 
 import numpy as np
 import tensorflow.compat.v1 as tf
@@ -19,13 +9,13 @@ from scipy.special import erfc as scipy_erfc
 tf.disable_v2_behavior()
 
 
-# ── Вспомогательная функция: ierfc ────────────────────────
+# Helper function: ierfc
 def _ierfc(u):
     u = np.asarray(u, dtype=np.float64)
     return np.exp(-u**2) / np.sqrt(np.pi) - u * scipy_erfc(u)
 
 
-# ── Физически точный IC профиль при t = t_melt ────────────
+# ── Physical IC profile at t = t_melt
 def preheating_Ts(z_arr, t_melt, A_s, I, ks, alpha_s, Tm, T0):
     z_arr = np.asarray(z_arr, dtype=np.float64)
     AI_s  = float(A_s) * float(I)
@@ -34,7 +24,6 @@ def preheating_Ts(z_arr, t_melt, A_s, I, ks, alpha_s, Tm, T0):
     return np.clip(T0 + coeff * _ierfc(xi), T0, Tm).astype(np.float32)
 
 
-# ── Загрузка FDM эталона ───────────────────────────────────
 def load_fdm_reference(npz_path):
     data = np.load(npz_path)
     return {
@@ -54,20 +43,20 @@ def sample_fdm_supervision(fdm_ref, t_melt, t_max,
     z_fdm = fdm_ref["z_fdm"]
     T_fdm = fdm_ref["T_fdm"]
 
-    # Убираем t < t_melt (там S=0, не информативно для PINN)
+    # Deleting t < t_melt
     mask = t_fdm >= t_melt - 1e-12
     t_valid = t_fdm[mask]
     S_valid = S_fdm[mask]
 
-    # Supervision S(t): случайная выборка из FDM
+    # Supervision S(t): random sampling from FDM
     idx = rng.choice(len(t_valid), size=min(N_sup_S, len(t_valid)), replace=False)
     t_sup_S = t_valid[idx].astype(np.float32)
     S_sup   = S_valid[idx].astype(np.float32)
 
-    # Supervision Ts(z, t_max): из финального профиля FDM
-    # Берём только solid зону: z > S_fdm[-1]
+    # Supervision Ts(z, t_max): from the final profile of FDM
+    # Only solid zone: z > S_fdm[-1]
     S_end = S_fdm[-1]
-    solid_mask = z_fdm >= S_end * 0.95  # небольшой запас
+    solid_mask = z_fdm >= S_end * 0.95 
     z_solid = z_fdm[solid_mask]
     T_solid = T_fdm[solid_mask]
 
@@ -79,7 +68,7 @@ def sample_fdm_supervision(fdm_ref, t_melt, t_max,
         z_sup_Ts = z_solid.astype(np.float32)
         Ts_sup   = T_solid.astype(np.float32)
 
-    # Все supervision по Ts берутся при t = t_max
+    # All supervisions by Ts are taken at t = t_max
     t_sup_Ts = np.full(len(z_sup_Ts), t_max, dtype=np.float32)
 
     return dict(
@@ -91,7 +80,7 @@ def sample_fdm_supervision(fdm_ref, t_melt, t_max,
     )
 
 
-# ── FCNN ──────────────────────────────────────────────────
+# FCNN
 def xavier_init(in_dim, out_dim):
     stddev = np.sqrt(2.0 / (in_dim + out_dim))
     return tf.Variable(
@@ -114,8 +103,7 @@ class FCNN:
             H = tf.tanh(tf.matmul(H, w) + b)
         return tf.matmul(H, self.weights[-1]) + self.biases[-1]
 
-
-# ── Основной класс PINN ───────────────────────────────────
+ 
 class StefanMetalsV2:
 
     def __init__(
@@ -126,15 +114,15 @@ class StefanMetalsV2:
         A_s, A_l, I,
         S_scale=None,
         S_max_hint=None,
-        # PDE нормализация (если None — вычисляется из FDM)
+        # PDE normalization (if None — computed from FDM)
         pde_l_scale=None,
         pde_s_scale=None,
         layers_T=(2, 64, 64, 64, 1),
         layers_S=(1, 64, 64, 64, 1),
-        # Веса физических потерь
+        # Weights of physical losses
         w_r=1.0, w_ic=50.0, w_bc_l=500.0, w_bc_s=20.0,
         w_xt=800.0, w_xs=100.0, w_x0=20.0, w_xmin=20.0,
-        # Веса FDM supervision (новое)
+        # Weights of FDM supervision losses
         w_sup_S=300.0, w_sup_Ts=50.0,
         X_min_m=1e-8,
         seed=1234,
@@ -160,7 +148,6 @@ class StefanMetalsV2:
         dT_s      = 1.05 * T_char
         t_dur     = float(t_max - t_melt)
 
-        # PDE нормализация: предпочтительно из FDM
         if pde_s_scale is None:
             pde_s_scale = T_char / t_dur
         if pde_l_scale is None:
@@ -205,7 +192,7 @@ class StefanMetalsV2:
         self.net_Ts = FCNN(list(layers_T))
         self.net_S  = FCNN(list(layers_S))
 
-        # Физические плейсхолдеры
+        # physical placholders
         self.z_rl  = tf.placeholder(tf.float32, [None, 1], 'z_rl')
         self.t_rl  = tf.placeholder(tf.float32, [None, 1], 't_rl')
         self.z_rs  = tf.placeholder(tf.float32, [None, 1], 'z_rs')
@@ -215,7 +202,7 @@ class StefanMetalsV2:
         self.t_bc  = tf.placeholder(tf.float32, [None, 1], 't_bc')
         self.t_S   = tf.placeholder(tf.float32, [None, 1], 't_S')
 
-        # FDM supervision плейсхолдеры (новые)
+        # FDM supervision placholders
         self.t_sup_S  = tf.placeholder(tf.float32, [None, 1], 't_sup_S')
         self.S_sup    = tf.placeholder(tf.float32, [None, 1], 'S_sup')
         self.z_sup_Ts = tf.placeholder(tf.float32, [None, 1], 'z_sup_Ts')
@@ -234,7 +221,7 @@ class StefanMetalsV2:
         self.sess = tf.Session(config=gpu_cfg)
         self.sess.run(tf.global_variables_initializer())
 
-    # ── Нормализация ─────────────────────────────────────
+    # Normalization
     def _nz(self, z):
         return 2.0 * z / self.z_max - 1.0
 
@@ -245,7 +232,6 @@ class StefanMetalsV2:
         eps = tf.constant(1e-12, dtype=tf.float32)
         return 2.0 * (t - self.t_melt) / (self.t_span + eps) - 1.0
 
-    # ── Выходные поля ─────────────────────────────────────
     def S(self, t):
         eps     = tf.constant(1e-12, dtype=tf.float32)
         tau     = tf.clip_by_value((t - self.t_melt) / (self.t_span + eps), 0.0, 1.0)
@@ -261,8 +247,7 @@ class StefanMetalsV2:
         inp = tf.concat([self._nz(z), self._nt(t)], axis=1)
         s   = 0.5 * (tf.tanh(self.net_Ts(inp)) + 1.0)
         return self.T0 + self.dT_s * s
-
-    # ── Граф потерь ───────────────────────────────────────
+    
     def _build_graph(self):
         eps = tf.constant(1e-12, dtype=tf.float32)
 
@@ -282,33 +267,33 @@ class StefanMetalsV2:
             / (self.pde_s + eps)
         ))
 
-        # 3. IC: Ts(z, t_melt) = preheating (физически точно)
+        # 3. IC: Ts(z, t_melt) = preheating
         t_ic = tf.ones_like(self.z_ic) * self.t_melt
         self.LIC = tf.reduce_mean(tf.square(
             (self.Ts(self.z_ic, t_ic) - self.Ts_ic) / (self.T_char + eps)
         ))
 
-        # 4. BC поверхность: -kl * dTl/dz(0,t) = AI_l
+        # 4. BC surface: -kl * dTl/dz(0,t) = AI_l
         z_surf = tf.zeros_like(self.t_bc)
         Tl_s   = self.Tl(z_surf, self.t_bc)
         self.Lbc_l = tf.reduce_mean(tf.square(
             (-self.kl * tf.gradients(Tl_s, z_surf)[0] - self.AI_l) / (self.q_scale + eps)
         ))
 
-        # 5. BC дальнее поле: Ts(z_max, t) = T0
+        # 5. BC far field: Ts(z_max, t) = T0
         z_far = tf.ones_like(self.t_bc) * self.z_max
         self.Lbc_s = tf.reduce_mean(tf.square(
             (self.Ts(z_far, self.t_bc) - self.T0) / (self.T_char + eps)
         ))
 
-        # 6. Условие на интерфейсе: Tl(S,t) = Ts(S,t) = Tm
+        # 6. Interface condition: Tl(S,t) = Ts(S,t) = Tm
         S_val = self.S(self.t_S)
         self.LXT = tf.reduce_mean(
             tf.square((self.Tl(S_val, self.t_S) - self.Tm) / (self.T_char + eps)) +
             tf.square((self.Ts(S_val, self.t_S) - self.Tm) / (self.T_char + eps))
         )
 
-        # 7. Условие Стефана: rho_s*Lh*dS/dt = ks*dTs/dz|S - kl*dTl/dz|S
+        # 7. Stefan condition: rho_s*Lh*dS/dt = ks*dTs/dz|S - kl*dTl/dz|S
         d   = tf.maximum(self.delta, tf.constant(1e-12, dtype=tf.float32))
         z_l = tf.maximum(S_val - d, tf.constant(0.0, dtype=tf.float32))
         z_s = tf.minimum(S_val + d, self.z_max)
@@ -326,17 +311,17 @@ class StefanMetalsV2:
             tf.square(tf.nn.relu(self.X_min - S_val) / (self.X_min + eps))
         )
 
-        # 10. FDM SUPERVISION — S(t) (новое)
+        # 10. FDM SUPERVISION — S(t)
         self.L_sup_S = tf.reduce_mean(tf.square(
             (self.S(self.t_sup_S) - self.S_sup) / (self.S_scale + eps)
         ))
 
-        # 11. FDM SUPERVISION — Ts(z, t_max) (новое)
+        # 11. FDM SUPERVISION — Ts(z, t_max)
         self.L_sup_Ts = tf.reduce_mean(tf.square(
             (self.Ts(self.z_sup_Ts, self.t_sup_Ts) - self.Ts_sup) / (self.T_char + eps)
         ))
 
-        # Физическая часть потерь
+        # Physical loss part (PDE + IC + BC + interface)
         physics = (
             self.w_r    * (self.Lr_l + self.Lr_s) +
             self.w_ic   * self.LIC                +
@@ -348,14 +333,13 @@ class StefanMetalsV2:
             self.w_xmin * self.LXmin
         )
 
-        # FDM supervision часть (всегда активна)
+        # FDM supervision part
         supervision = (
             self.w_sup_S  * self.L_sup_S  +
             self.w_sup_Ts * self.L_sup_Ts
         )
 
-        # Итоговая потеря:
-        # sup_weight управляет балансом supervision в curriculum
+        # Final loss:
         self.loss      = self.phys_weight * physics + self.sup_weight * supervision + self.w_ic * self.LIC
         self.phys_loss = physics
         self.sup_loss  = supervision
