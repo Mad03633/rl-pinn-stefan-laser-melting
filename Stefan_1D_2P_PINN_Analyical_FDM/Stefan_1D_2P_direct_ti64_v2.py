@@ -1,15 +1,12 @@
-# ============================================================
-# Stefan_1D_2P_direct_ti64_v2.py
-# PINN v2 для Ti-6Al-4V — все 4 интеnsивности
-# Эталоны: FDM (главный) + Ngwenya (справка)
+# PINN for Ti-6Al-4V — all 4 intensities (5, 50, 500, 5000 kW/cm²)
+# Reference: FDM (main) + Ngwenya (reference)
 #
-# ЗАПУСК:
+# Runner:
 #   python Stefan_1D_2P_direct_ti64_v2.py --intensity 5
 #   python Stefan_1D_2P_direct_ti64_v2.py --intensity 50
 #   python Stefan_1D_2P_direct_ti64_v2.py --intensity 500
 #   python Stefan_1D_2P_direct_ti64_v2.py --intensity 5000
 #   python Stefan_1D_2P_direct_ti64_v2.py --intensity all
-# ============================================================
 
 import argparse
 import os
@@ -26,7 +23,7 @@ from Stefan_1D_2P_models_ti64_v2 import (
 
 from save_pinn_results import save_pinn_ti64
 
-# ── Параметры материала ───────────────────────────────────
+
 MAT = dict(
     rho=4510.0, Lh=2.9e5, Tm=1928.0, T0=300.0,
     ks=20.0, kl=29.0,
@@ -46,7 +43,6 @@ RESULTS_DIR = "results"
 PLOTS_DIR   = "plots"
 
 
-# ── Подготовка данных ─────────────────────────────────────
 def make_data_ti64(z_max, t_max, X_ng, t_ref, fdm_ref,
                    AI_eff, ks, alpha_s, kl, Tm, T0,
                    Nr=25000, N0=8000, Nbc=8000, NX=8000,
@@ -59,12 +55,12 @@ def make_data_ti64(z_max, t_max, X_ng, t_ref, fdm_ref,
     def X_at(t_val):
         return float(np.interp(t_val, t_ref, X_ng))
 
-    # Физика: liquid residual (z < X(t))
+    # Physics: liquid residual (z < X(t))
     t_rl = rng.uniform(t_eps, t_max, Nr).astype(np.float32)
     z_rl = np.array([rng.uniform(0.0, max(X_at(ti), 1e-9)) for ti in t_rl],
                     dtype=np.float32)
 
-    # Физика: solid residual (z > X(t))
+    # Physics: solid residual (z > X(t))
     t_rs = rng.uniform(t_eps, t_max, Nr).astype(np.float32)
     z_rs = np.array([rng.uniform(X_at(ti), z_max) for ti in t_rs],
                     dtype=np.float32)
@@ -91,14 +87,14 @@ def make_data_ti64(z_max, t_max, X_ng, t_ref, fdm_ref,
     Ts_sup_vals = ngwenya_Ts(z_sup_Ts, t_sup_Ts, AI_eff, ks, alpha_s, Tm, T0).astype(np.float32)
     Tl_sup_vals = ngwenya_Tl(z_sup_Tl, X_sup_Tl, AI_eff, kl, Tm).astype(np.float32)
 
-    # FDM supervision X (новое)
+    # FDM supervision X
     t_fdm  = fdm_ref["t_fdm"]
     S_fdm  = fdm_ref["S_fdm"]
     idx_f  = rng.choice(len(t_fdm), size=min(N_fdm_X, len(t_fdm)), replace=False)
     t_fdm_X = t_fdm[idx_f].astype(np.float32)
     X_fdm   = S_fdm[idx_f].astype(np.float32)
 
-    # FDM supervision Ts при t = t_max (новое)
+    # FDM supervision Ts at t = t_max
     z_fdm    = fdm_ref["z_fdm"]
     T_fdm    = fdm_ref["T_fdm"]
     S_end    = S_fdm[-1]
@@ -129,7 +125,6 @@ def make_data_ti64(z_max, t_max, X_ng, t_ref, fdm_ref,
     )
 
 
-# ── Основная функция для одной интеnsивности ──────────────
 def run_intensity(I_kW_cm2):
     mat   = MAT
     t_max = mat["t_max"]
@@ -148,7 +143,6 @@ def run_intensity(I_kW_cm2):
     print(f"  AI_eff = {AI_eff:.3e} W/m²")
     print("=" * 65)
 
-    # FDM эталон
     fdm_path = os.path.join(RESULTS_DIR, f"fdm_explicit_Ti64_{I_kW_cm2}kWcm2.npz")
     if not os.path.exists(fdm_path):
         raise FileNotFoundError(
@@ -159,7 +153,6 @@ def run_intensity(I_kW_cm2):
     fdm_X_max = float(fdm_ref['S_fdm'][-1])
     print(f"  FDM loaded: X_final = {fdm_ref['S_fdm'][-1]*1e6:.3f} μm")
 
-    # Ngwenya эталон (справка)
     N_ref = 2000
     t_ref = np.linspace(0.0, t_max, N_ref)
     X_ng  = ngwenya_X(t_ref, AI_eff, ks, alpha_s, Tm, T0)
@@ -263,7 +256,7 @@ def _plot_ti64(I_kW_cm2, model, fdm_ref, X_ng, t_ref, t_plot, X_pinn, metrics, e
     ax.legend(fontsize=9); ax.set_xlim(0, MAT["t_max"] * 1e6)
     ax.set_ylim(bottom=0); ax.grid(True, alpha=0.3)
 
-    # Graph 2: ошибка vs FDM
+    # Graph 2: error vs FDM
     ax2 = axes[1]
     t_fdm = fdm_ref["t_fdm"].astype(np.float32)
     S_fdm = fdm_ref["S_fdm"]
@@ -277,7 +270,7 @@ def _plot_ti64(I_kW_cm2, model, fdm_ref, X_ng, t_ref, t_plot, X_pinn, metrics, e
     ax2.set_title(f"Error vs FDM  |  L2={metrics['err_l2_%']:.1f}%")
     ax2.grid(True, alpha=0.3)
 
-    # Graph 3: T(z) при t_max
+    # Graph 3: T(z) at t_max
     ax3 = axes[2]
     z_max  = fdm_ref["z_fdm"][-1]
     X_end  = X_pinn[-1, 0]
@@ -291,7 +284,7 @@ def _plot_ti64(I_kW_cm2, model, fdm_ref, X_ng, t_ref, t_plot, X_pinn, metrics, e
     ax3.axvline(X_end * 1e6, color='k', ls='--', lw=1.5, label=f'X={X_end*1e6:.2f} μm')
     ax3.axhline(MAT["Tm"], color='gray', ls=':', lw=1.5, label=f'Tm={MAT["Tm"]} K')
     ax3.set_xlabel("z (μm)"); ax3.set_ylabel("T (K)")
-    ax3.set_title(f"T(z) при t = {MAT['t_max']*1e6:.0f} μs")
+    ax3.set_title(f"T(z) at t = {MAT['t_max']*1e6:.0f} μs")
     ax3.legend(fontsize=8); ax3.grid(True, alpha=0.3)
 
     plt.tight_layout()
@@ -302,7 +295,6 @@ def _plot_ti64(I_kW_cm2, model, fdm_ref, X_ng, t_ref, t_plot, X_pinn, metrics, e
     print(f"  Graph: {path}")
 
 
-# ── Сводный график для всех интеnsивностей ────────────────
 def plot_all_intensities(all_results):
     fig, ax = plt.subplots(figsize=(10, 6))
 
@@ -335,7 +327,6 @@ def plot_all_intensities(all_results):
     print(f"\nСводный график: {path}")
 
 
-# ── Итоговая таблица ──────────────────────────────────────
 def print_summary(all_metrics):
     print("\n" + "=" * 75)
     print("Results — Ti-6Al-4V | PINN vs FDM vs Ngwenya")
@@ -348,7 +339,6 @@ def print_summary(all_metrics):
               f"{m['err_final_%']:>10.2f} {m['err_l2_%']:>8.2f}")
 
 
-# ── Точка входа ───────────────────────────────────────────
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--intensity", type=str, default="all",
@@ -366,7 +356,6 @@ if __name__ == "__main__":
 
     for I_kW in intensities:
         metrics, model = run_intensity(I_kW)
-        # Сохраняем для сводного графика
         fdm_ref = load_fdm_ti64(
             os.path.join(RESULTS_DIR, f"fdm_explicit_Ti64_{I_kW}kWcm2.npz")
         )
