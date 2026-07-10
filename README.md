@@ -166,3 +166,9 @@ Comparison of all metals (FDM, PINN, Analytical)
 <p align="center">
   <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/dev/Stefan_1D_2P_PINN_Analyical_FDM/plots/comparison/comparison_all_metals_grid.png" />
 </p>
+
+Comparison of Titanium alloy for all intensities (FDM, PINN, Analytical)
+
+<p align="center">
+  <img src="https://github.com/Mad03633/rl-pinn-stefan-laser-melting/blob/dev/Stefan_1D_2P_PINN_Analyical_FDM/plots/comparison/comparison_Ti64_grid.png" />
+</p>
