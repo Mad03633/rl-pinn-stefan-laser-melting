@@ -84,8 +84,6 @@ $$
 
 ---
 
-$$
-
 Stefan condition:
 
 $$
