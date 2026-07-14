@@ -87,10 +87,7 @@ $$
 Stefan condition:
 
 $$
-\rho L \frac{dX}{dt} =
-k_s \frac{\partial T_s}{\partial z}
--
-k_l \frac{\partial T_l}{\partial z}
+\rho L \frac{dX}{dt} = k_s \frac{\partial T_s}{\partial z} - k_l \frac{\partial T_l}{\partial z}
 $$
 
 ---
