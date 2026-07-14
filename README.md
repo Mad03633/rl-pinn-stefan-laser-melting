@@ -4,10 +4,10 @@ This repository contains the implementation for the Master's thesis:
 
 **“Reinforcement-Learning-Guided Physics-Informed Neural Networks for Adaptive Control of the Melt Front in Fast Laser Melting”**
 
-**Author:** Madiyar Bolatov
-**Supervisor:** Dr. PhD Samat Kassabek 
-**Program:** Applied Artificial Intelligence (MSc), Astana IT University  
-**Years:** 2025–2027
+- **Author:** Madiyar Bolatov
+- **Supervisor:** Dr. PhD Samat Kassabek 
+- **Program:** Applied Artificial Intelligence (MSc), Astana IT University  
+- **Years:** 2025–2027
 
 ---
 
